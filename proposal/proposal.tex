@@ -31,7 +31,7 @@ breaklinks=true, }
 \toappear{Project proposal for the Pervasive Computing Course, Spring 2012. The IT University of Copenhagen. Copyright remains with the authors.}
 
 
-\title{UbiComp 2011 Conference Proceedings Format}
+\title{Smart Homes for Dummies}
 \numberofauthors{2}
 \author{
   \alignauthor Egil Hansen\\
@@ -67,20 +67,56 @@ breaklinks=true, }
 %Security, Standardization, Theory, Verification.}
 
 \section{Background}
-hep
+Many existing systems and protocols enable the control of devices in smart homes, including OSGi, X10, and ZigBee. However, all of these systems rely on a central control unit in addition to the devices being controlled. Installation and configuration of devices in smart homes, especially UI-less devices,  is also hard for most non-technical users, often requiring a technician to assist in the installation. Both of these facts make smart home technology less accessible to many people, by increasing the initial cost in hardware and man-hours.
 
 \section{Idea}
-hep
+We want to define a general purpose architecture and protocol for UI-less smart homes devices, that leverages the existing, modern, infrastructure which exists in most homes, i.e. Wifi networks and Android devices. We believe that is possible to design such a system that will allow non-technical users to easily install, configure, and operate most common smart home devices with only their Android device.
+
+To provide a UI for UI-less devices, we must also define or re-purpose a protocol that enables the functionality that the device supports. Our idea is to let each smart home device define UI controls without defining their visual appearance, that way we decouple look and feel from functionality, and make it possible to achieve an consistent look and feel of the control among many different smart home devices.
+
+The minimum requirement to a smart home device is a Wifi radio, and a way to put put the device into installation mode. When a device is in installation mode, an Android device is able to configure it, in essence, assigning a name to it and telling it which Wifi hotspot to connect to. Once the device is on Wifi, an Android device will be able to control and configure it while connected to the homes Wifi.
+
+A similar approach is described in LockIT~\cite{lockit}, though it has the disadvantages of requiring an NFC-enabled phone  and of disconnecting the phone from the ordinary Wifi  connection during use.
 
 \section{Scenario}
-hep
+\subsection{Installation}
+\begin{enumerate}
+\item A user buys our device in a hardware store. In this example, the device is a smart switch controlling the power for a lamp.
+\item The user gets home and plugs in the device between a power plug and a lamp.
+\item The user is guided through the process of installing the Android app and connecting the smart switch to the Wifi access point.
+\end{enumerate}
+
+
+\subsection{Daily use}
+\begin{enumerate}
+\item The user is lying on the couch watching a movie, and realizes that the room lighting  is too bright.
+\item Not wanting to get up, the user opts to turn down the light using a smart light switch that was previously installed.
+\item The user starts the app on his Android phone, which shows a list of available devices.
+\item The user selects the light switch, and the app shows the UI for the switch.
+\item The user turns down the light through the UI and enjoys the rest of the movie.
+\end{enumerate}
 
 \section{Plan}
-hep
+In our project, we need to:
+\begin{itemize}
+\item Select communication protocols, service protocols, etc., for UI-less devices.
+\item Select or define  a syntax for specifying the UIs to be shown in the Android app.
+\item Define an easy-to-follow process for associating a UI-less device with a Wifi access point.
+\item Develop Android app for installation, configuration, and control of UI-less devices.
+\end{itemize}
+
+We will evaluate our implementation through user testing by users who own a smart phone but are otherwise non-technical.
+
+\section{Equipment}
+\begin{itemize}
+\item Android phone (both group members have Android phones available)
+\item Arduino with Wifi shield, for prototyping a UI-less device
+\end{itemize}
 
 
-\subsection{Equipment}
-hep
+\section{Supervisors}
+Jakob Bardram?
+
 
 % Referencer:
 % ~\cite{ref}
