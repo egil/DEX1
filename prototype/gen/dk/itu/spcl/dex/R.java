@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package dk.itu.spct.dex;
+package dk.itu.spcl.dex;
 
 public final class R {
     public static final class attr {

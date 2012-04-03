@@ -1,5 +1,6 @@
-package dk.itu.spct.dex;
+package dk.itu.spcl.dex;
 
+import dk.itu.spcl.dex.R;
 import android.app.Activity;
 import android.os.Bundle;
 
