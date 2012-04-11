@@ -26,7 +26,7 @@ public class HomeActivity extends TabActivity {
   private void addPresetTab(Resources res, TabHost tabHost) {
     TabHost.TabSpec spec;
     Intent intent;
-    intent = new Intent().setClass(this, PresetListActivity.class);
+    intent = new Intent(this, PresetListActivity.class);
     spec = tabHost.newTabSpec("presetlist")
         .setIndicator("Presets")//, res.getDrawable(R.drawable.ic_tab_default))
         .setContent(intent);
@@ -34,10 +34,8 @@ public class HomeActivity extends TabActivity {
   }
 
   private void addThingyTab(Resources res, TabHost tabHost) {
-    TabHost.TabSpec spec;
-    Intent intent;
-    intent = new Intent().setClass(this, ThingyListActivity.class);
-    spec = tabHost.newTabSpec("thingylist")
+    Intent intent = new Intent(this, ThingyListActivity.class);
+    TabHost.TabSpec spec = tabHost.newTabSpec("thingylist")
         .setIndicator("Thingies")//, res.getDrawable(R.drawable.ic_tab_default))
         .setContent(intent);
     tabHost.addTab(spec);

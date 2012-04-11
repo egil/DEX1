@@ -27,6 +27,9 @@
         <activity
             android:name=".ScanActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".ThingyActivity"
+            android:label="@string/app_name" />
         
     </application>
 
