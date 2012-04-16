@@ -1,0 +1,11 @@
+// root object defines a single view template
+{
+  // String (required).
+  "title": "Title of view template",
+  // String (optional)
+  "description": "Description of view",
+  // Double (required). Defines the version the JSONIDL is defined in.
+  "version": 1.0,
+  // Array of widgets and/or groups (required)
+  "widgets": []
+}
