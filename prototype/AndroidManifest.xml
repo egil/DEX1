@@ -30,6 +30,9 @@
         <activity
             android:name=".ThingyActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".PresetActivity"
+            android:label="@string/app_name" />
         
     </application>
 

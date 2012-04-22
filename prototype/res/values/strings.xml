@@ -2,5 +2,7 @@
 <resources>
     <string name="app_name">Home Remote</string>
     <string name="newThingyMenu">New thingy</string>
+    <string name="presetActivate">Activate</string>
+    <string name="newPresetMenu">New preset</string>
 
 </resources>
