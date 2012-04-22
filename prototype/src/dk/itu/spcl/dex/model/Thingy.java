@@ -1,17 +1,10 @@
 package dk.itu.spcl.dex.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-public class Thingy implements Parcelable {
+public class Thingy implements Comparable<Thingy> {
 
   private String _name;
 
   public Thingy() {
-  }
-
-  private Thingy(Parcel in) {
-    _name = in.readString();
   }
 
   public String getName() {
@@ -29,23 +22,7 @@ public class Thingy implements Parcelable {
   }
 
   @Override
-  public int describeContents() {
-    return 0;
+  public int compareTo(Thingy another) {
+    return getName().compareTo(another.getName());
   }
-
-  @Override
-  public void writeToParcel(Parcel out, int flags) {
-    out.writeString(_name);
-  }
-
-  public static final Parcelable.Creator<Thingy> CREATOR = new Parcelable.Creator<Thingy>() {
-    public Thingy createFromParcel(Parcel in) {
-      return new Thingy(in);
-    }
-
-    public Thingy[] newArray(int size) {
-      return new Thingy[size];
-    }
-  };
-
 }
