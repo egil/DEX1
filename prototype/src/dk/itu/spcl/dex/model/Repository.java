@@ -17,7 +17,11 @@ public class Repository {
   private ArrayList<UpdateListener> _updateListeners = new ArrayList<Repository.UpdateListener>();
 
   private Repository() {
-    // test data
+    //addTestData();
+  }
+
+  @SuppressWarnings("unused")
+  private void addTestData() {
     addThingy(new Thingy().setName("test thingy"));
     addThingy(new Thingy().setName("other thingy"));
     addThingy(new Thingy().setName("third thingy"));
