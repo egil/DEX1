@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Repository.UpdateListener;
@@ -18,7 +17,7 @@ public class ThingyListActivity extends ListActivity {
 
   private Repository _repository;
   private final int SCAN_FOR_THINGY_REQUEST_CODE = 1;
-  private ArrayAdapter<Thingy> _listAdapter;
+  private CustomArrayAdapter<Thingy> _listAdapter;
   private Repository.UpdateListener _updateListener;
   private boolean _selectionMode;
 
@@ -96,8 +95,8 @@ public class ThingyListActivity extends ListActivity {
   }
 
   private void initializeThingyList() {
-    _listAdapter = new ArrayAdapter<Thingy>(this, R.layout.default_list_item,
-        new ArrayList<Thingy>());
+    _listAdapter = new CustomArrayAdapter<Thingy>(this,
+        R.layout.default_list_item, R.id.listTextView, new ArrayList<Thingy>());
     setListAdapter(_listAdapter);
 
     populateThingyList();

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Preset;
@@ -20,7 +19,7 @@ import dk.itu.spcl.dex.model.Repository.UpdateListener;
 public class PresetListActivity extends ListActivity {
 
   private Repository _repository;
-  private ArrayAdapter<Preset> _listAdapter;
+  private CustomArrayAdapter<Preset> _listAdapter;
   private Repository.UpdateListener _updateListener;
 
   @Override
@@ -82,8 +81,8 @@ public class PresetListActivity extends ListActivity {
   }
 
   private void initializePresetList() {
-    _listAdapter = new ArrayAdapter<Preset>(this, R.layout.default_list_item,
-        new ArrayList<Preset>());
+    _listAdapter = new CustomArrayAdapter<Preset>(this,
+        R.layout.default_list_item, R.id.listTextView, new ArrayList<Preset>());
     setListAdapter(_listAdapter);
 
     populatePresetList();

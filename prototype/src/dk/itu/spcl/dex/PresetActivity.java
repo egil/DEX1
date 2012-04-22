@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
@@ -19,7 +19,7 @@ public class PresetActivity extends Activity {
   private static final int PICK_THINGY_REQUEST_CODE = 1;
   private Preset _preset;
   private Repository _repository;
-  private ArrayAdapter<Thingy> _listAdapter;
+  private CustomArrayAdapter<Thingy> _listAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,8 @@ public class PresetActivity extends Activity {
   }
 
   private void initializeThingyList() {
-    _listAdapter = new ArrayAdapter<Thingy>(this, R.layout.default_list_item,
-        new ArrayList<Thingy>());
+    _listAdapter = new CustomArrayAdapter<Thingy>(this,
+        R.layout.default_list_item, R.id.listTextView, new ArrayList<Thingy>());
     ListView listView = (ListView) findViewById(R.id.presetThingyList);
     listView.setAdapter(_listAdapter);
 
@@ -78,7 +78,8 @@ public class PresetActivity extends Activity {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // super.onActivityResult(requestCode, resultCode, data);
     if (resultCode != RESULT_CANCELED) {
-      Thingy selected = _repository.getThingy(data.getExtras().getString("thingy"));
+      Thingy selected = _repository.getThingy(data.getExtras().getString(
+          "thingy"));
       _preset.addThingy(selected);
       populateThingyList();
     }
