@@ -21,11 +21,15 @@ public class ThingyListActivity extends ListActivity {
   private final int SCAN_FOR_THINGY_REQUEST_CODE = 1;
   private ArrayAdapter<Thingy> _listAdapter;
   private Repository.UpdateListener _updateListener;
+  private boolean _selectionMode;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     _repository = Repository.getInstance();
+
+    _selectionMode = getIntent().getBooleanExtra("selectionMode", false);
+
     populateThingyList();
     addRepositoryListener();
     addListSelectionListener();
@@ -60,9 +64,23 @@ public class ThingyListActivity extends ListActivity {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
         Thingy thingy = (Thingy) parent.getItemAtPosition(position);
-        startThingyActivity(thingy);
+        onThingySelected(thingy);
       }
     });
+  }
+
+  private void onThingySelected(Thingy thingy) {
+    if (_selectionMode) {
+      returnThingy(thingy);
+    } else {
+      startThingyActivity(thingy);
+    }
+  }
+
+  private void returnThingy(Thingy thingy) {
+    Intent data = new Intent(this, getClass()).putExtra("thingy", thingy.getName());
+    setResult(RESULT_OK, data);
+    finish();
   }
 
   private void startThingyActivity(Thingy thingy) {
@@ -104,8 +122,7 @@ public class ThingyListActivity extends ListActivity {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // super.onActivityResult(requestCode, resultCode, data);
     if (resultCode != RESULT_CANCELED) {
-      Thingy newThingy = (Thingy) data.getExtras().get("thingy");
-      _repository.addThingy(newThingy);
+      // thingy added to repo already, nothing to do!
     }
   }
 

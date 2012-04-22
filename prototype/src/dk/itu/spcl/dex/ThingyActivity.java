@@ -16,6 +16,8 @@ public class ThingyActivity extends Activity {
 
     _thingy = Repository.getInstance().getThingy(
         getIntent().getStringExtra("thingy"));
+    
+    setTitle("Thingy: " +_thingy.getName());
 
     TextView textview = new TextView(this);
     textview.setText("UI for " + _thingy.getName() + " goes here!");

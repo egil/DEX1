@@ -4,5 +4,7 @@
     <string name="newThingyMenu">New thingy</string>
     <string name="presetActivate">Activate</string>
     <string name="newPresetMenu">New preset</string>
+    <string name="addThingyMenu">Add thingy</string>
+    <string name="renamePresetMenu">Rename</string>
 
 </resources>
