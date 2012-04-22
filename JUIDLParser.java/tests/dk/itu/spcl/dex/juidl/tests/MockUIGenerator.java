@@ -10,68 +10,16 @@ import org.json.JSONObject;
 import dk.itu.spcl.dex.juidl.UIGenerator;
 
 public class MockUIGenerator extends UIGenerator {
+	public String canvasTitle;
+	public String canvasDesription;
+	public double canvasVersion;
+	public ArrayList<JSONObject> canvasItems = new ArrayList<JSONObject>();
 
 	@Override
 	protected void generateCanvas(String title, String description,
 			double version) {
-		// TODO Auto-generated method stub
-		
+		canvasTitle = title;
+		canvasDesription = description;
+		canvasVersion = version;
 	}
-
-	@Override
-	protected void generateStringWidget(String id, String parentId,
-			String title, String description, String type, String content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateIntWidget(String id, String parentId, String title,
-			String description, String type, int content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateDoubleWidget(String id, String parentId,
-			String title, String description, String type, double content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateBooleanWidget(String id, String parentId,
-			String title, String description, String type, boolean content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateStringListWidget(String id, String parentId,
-			String title, String description, String type, List<String> content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateIntListWidget(String id, String parentId,
-			String title, String description, String type, List<Integer> content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateDoubleListWidget(String id, String parentId,
-			String title, String description, String type, List<Double> content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void generateBooleanListWidget(String id, String parentId,
-			String title, String description, String type, List<Boolean> content) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

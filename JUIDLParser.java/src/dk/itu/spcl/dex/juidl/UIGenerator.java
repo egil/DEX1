@@ -2,7 +2,10 @@ package dk.itu.spcl.dex.juidl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -10,7 +13,8 @@ import org.json.JSONObject;
 
 public abstract class UIGenerator {
 	public static final double[] SUPPORTED_SCHEMA_VERSIONS = { 1.0 };
-	private HashSet<String> idCol;
+	private static Comparator<JSONObject> priorityComparator = new JSONWidgetPriorityComparator();
+	private HashSet<String> idCol; 
 
 	/**
 	 * Use this method to generate the UI based on the schema.
@@ -98,17 +102,43 @@ public abstract class UIGenerator {
 		}
 	}
 	
-	private void generateWidgets(JSONArray widgets, String parentId) {		
+	private void generateWidgets(JSONArray widgets, String parentId) {			
+		JSONObject[] sortedWidgets = new JSONObject[widgets.length()]; 
 		int index = 0;
 		JSONObject widget;	
-		while (null != (widget = widgets.optJSONObject(index))) {
-			generateWidget(widget, parentId);
+		while (null != (widget = widgets.optJSONObject(index))) {			
+			sortedWidgets[index] = widget;
 			index++;
-		}	
+		}
+		
+		// sort array of widgets according to priority
+		Arrays.sort(sortedWidgets, priorityComparator);
+		
+		// generate each widget
+		for(index = 0; index < sortedWidgets.length; index++) {
+			generateWidget(sortedWidgets[index], parentId);
+		}
 	}
 	
 	private void generateWidget(JSONObject widget, String parentId) {
-		
+		// create new widget	
+		//Widget w = Widget.createFromJSONObject(widget);
+//		String ct = widget.optString("content-type");
+//		if (ct.equalsIgnoreCase("integer")) {
+//			Widget<Integer> w = Widget.genericFillFromJSONObject(Integer.class, widget, parentId);
+//			
+//		} else if (ct.equalsIgnoreCase("boolean")) {
+//			Widget<Boolean> w = new Widget<Boolean>();
+//		} else if (ct.equalsIgnoreCase("integer[]")) {
+//			Widget<List<Integer>> w = new Widget<List<Integer>>();
+//		} else if (ct.equalsIgnoreCase("boolean[]")) {
+//			Widget<List<Boolean>> w = new Widget<List<Boolean>>();
+//		} else if (ct.equalsIgnoreCase("string[]")) {
+//			Widget<List<String>> w = new Widget<List<String>>();
+//		} else {
+//			// default ("string")
+//			Widget<String> w = new Widget<String>();
+//		}
 		
 		// generate sub widgets
 		JSONArray widgets = widget.optJSONArray("widgets");
@@ -116,62 +146,74 @@ public abstract class UIGenerator {
 			generateWidgets(widgets, widget.optString("id"));		
 		}
 	}
+	
+	
 
 	protected abstract void generateCanvas(String title, String description, double version);
-	
-	protected abstract void generateStringWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         String content);
-	
-	protected abstract void generateIntWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         int content);
-	
-	protected abstract void generateDoubleWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         double content);
-	
-	protected abstract void generateBooleanWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         boolean content);
-
-	protected abstract void generateStringListWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         List<String> content);
-	
-	protected abstract void generateIntListWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         List<Integer> content);
-	
-	protected abstract void generateDoubleListWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         List<Double> content);
-	
-	protected abstract void generateBooleanListWidget(String id, 
-	         String parentId, 
-	         String title, 
-	         String description, 
-	         String type,
-	         List<Boolean> content);
+//	
+//	protected abstract void generateStringWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         String content);
+//	
+//	protected abstract void generateIntWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         int content);
+//	
+//	protected abstract void generateDoubleWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         double content);
+//	
+//	protected abstract void generateBooleanWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         boolean content);
+//
+//	protected abstract void generateStringListWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         List<String> content);
+//	
+//	protected abstract void generateIntListWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         List<Integer> content);
+//	
+//	protected abstract void generateDoubleListWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         List<Double> content);
+//	
+//	protected abstract void generateBooleanListWidget(String id, 
+//	         String parentId, 
+//	         String title, 
+//	         String description, 
+//	         WidgetType type,
+//	         List<Boolean> content);
+	/**
+	 * Class used to 
+	 */
+	private static class JSONWidgetPriorityComparator implements Comparator<JSONObject>	{
+		public int compare(JSONObject widget1, JSONObject widget2) {
+			int p1 = widget1.optInt("priority", 0); 
+			int p2 = widget2.optInt("priority", 0);
+			return p1 - p2;
+		}
+	}
 }

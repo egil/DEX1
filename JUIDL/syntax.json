@@ -14,24 +14,15 @@
   // String (required). A globally, unique ID for each widget.
   "id": "str",
   // String (optional)
-  "title": "Group title"
-  // String (optional)
-  "description": "Description of view",
-}
-
-{
-  // String (required). A globally, unique ID for each widget.
-  "id": "str",
-  // String (optional)
   "title": "Some widget",
   // String (optional)
   "description": "",
   // Integer (optional), default is NULL. Used to force a specific order of the widgets.
   "priority": NULL,
   // String (optional), default is read-only. Defines type of widget.
-  "type": "read-only|editable|select|multi-select|trigger",
+  "type": "read-only|editable|select|multi-select|trigger|group",
   // String (optional), default is string. Defines type of content.
-  "content-type": "string|integer|boolean|array of string/integer/boolean",
+  "content-type": "string|integer|boolean|string[]|integer[]|boolean[]",
   //
   "content": ""|1|[],
   // Array of widgets and/or groups (required)
