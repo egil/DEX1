@@ -1,15 +1,17 @@
 package dk.itu.spcl.dex;
 
+import java.util.ArrayList;
+
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.Repository;
@@ -25,7 +27,7 @@ public class PresetListActivity extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     _repository = Repository.getInstance();
-    populatePresetList();
+    initializePresetList();
     addRepositoryListener();
     addListSelectionListener();
   }
@@ -40,10 +42,12 @@ public class PresetListActivity extends ListActivity {
     _updateListener = new UpdateListener() {
       @Override
       public void repositoryUpdated() {
-        _listAdapter.clear();
-        for (Preset p : _repository.getPresets())
-          _listAdapter.add(p);
-        _listAdapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            populatePresetList();
+          }
+        });
       }
     };
     _repository.addUpdateListener(_updateListener);
@@ -59,9 +63,16 @@ public class PresetListActivity extends ListActivity {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
         Preset preset = (Preset) parent.getItemAtPosition(position);
-        startPresetActivity(preset);
+        onPresetSelected(preset);
       }
     });
+  }
+
+  private void onPresetSelected(Preset preset) {
+    if (preset != _repository.getDummyPreset())
+      startPresetActivity(preset);
+    else
+      newPreset();
   }
 
   private void startPresetActivity(Preset preset) {
@@ -70,32 +81,49 @@ public class PresetListActivity extends ListActivity {
     startActivity(intent);
   }
 
-  private void populatePresetList() {
+  private void initializePresetList() {
     _listAdapter = new ArrayAdapter<Preset>(this, R.layout.default_list_item,
-        _repository.getPresets());
+        new ArrayList<Preset>());
     setListAdapter(_listAdapter);
+
+    populatePresetList();
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.presetlistmenu, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-    case R.id.newPresetMenu:
-      newPreset();
-      return true;
-    default:
-      return super.onOptionsItemSelected(item);
-    }
+  private void populatePresetList() {
+    _listAdapter.clear();
+    for (Preset p : _repository.getPresets())
+      _listAdapter.add(p);
+    _listAdapter.add(_repository.getDummyPreset());
+    _listAdapter.notifyDataSetChanged();
   }
 
   private void newPreset() {
-    // http://blog.350nice.com/wp/archives/240
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle("New preset");
+    alert.setMessage("Name:");
+    final EditText input = new EditText(this);
+    alert.setView(input);
+
+    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int whichButton) {
+        String name = input.getText().toString();
+        if (name.length() > 0)
+          addPreset(name);
+      }
+    });
+
+    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int whichButton) {
+        // Canceled.
+      }
+    });
+    alert.show();
+  }
+
+  protected void addPreset(String name) {
+    Preset newPreset = new Preset().setName(name);
+    _repository.addPreset(newPreset);
+    startPresetActivity(newPreset);
   }
 
 }

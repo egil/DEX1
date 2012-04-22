@@ -1,11 +1,10 @@
 package dk.itu.spcl.dex;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -29,8 +28,10 @@ public class ThingyListActivity extends ListActivity {
     _repository = Repository.getInstance();
 
     _selectionMode = getIntent().getBooleanExtra("selectionMode", false);
+    if (_selectionMode)
+      setTitle("Select a thingy");
 
-    populateThingyList();
+    initializeThingyList();
     addRepositoryListener();
     addListSelectionListener();
   }
@@ -45,10 +46,12 @@ public class ThingyListActivity extends ListActivity {
     _updateListener = new UpdateListener() {
       @Override
       public void repositoryUpdated() {
-        _listAdapter.clear();
-        for (Thingy t : _repository.getThingies())
-          _listAdapter.add(t);
-        _listAdapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            populateThingyList();
+          }
+        });
       }
     };
     _repository.addUpdateListener(_updateListener);
@@ -72,13 +75,16 @@ public class ThingyListActivity extends ListActivity {
   private void onThingySelected(Thingy thingy) {
     if (_selectionMode) {
       returnThingy(thingy);
+    } else if (thingy == _repository.getDummyThingy()) {
+      newThingy();
     } else {
       startThingyActivity(thingy);
     }
   }
 
   private void returnThingy(Thingy thingy) {
-    Intent data = new Intent(this, getClass()).putExtra("thingy", thingy.getName());
+    Intent data = new Intent(this, getClass()).putExtra("thingy",
+        thingy.getName());
     setResult(RESULT_OK, data);
     finish();
   }
@@ -89,28 +95,21 @@ public class ThingyListActivity extends ListActivity {
     startActivity(intent);
   }
 
-  private void populateThingyList() {
+  private void initializeThingyList() {
     _listAdapter = new ArrayAdapter<Thingy>(this, R.layout.default_list_item,
-        _repository.getThingies());
+        new ArrayList<Thingy>());
     setListAdapter(_listAdapter);
+
+    populateThingyList();
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.thingylistmenu, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-    case R.id.newThingyMenu:
-      newThingy();
-      return true;
-    default:
-      return super.onOptionsItemSelected(item);
-    }
+  private void populateThingyList() {
+    _listAdapter.clear();
+    for (Thingy t : _repository.getThingies())
+      _listAdapter.add(t);
+    if (!_selectionMode)
+      _listAdapter.add(_repository.getDummyThingy());
+    _listAdapter.notifyDataSetChanged();
   }
 
   private void newThingy() {

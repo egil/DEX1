@@ -48,5 +48,4 @@ public class ScanActivity extends Activity {
     });
     scanThread.start();
   }
-
 }

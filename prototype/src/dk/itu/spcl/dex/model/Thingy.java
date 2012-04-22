@@ -1,6 +1,6 @@
 package dk.itu.spcl.dex.model;
 
-public class Thingy {
+public class Thingy implements Comparable<Thingy> {
 
   private String _name;
 
@@ -19,5 +19,10 @@ public class Thingy {
   @Override
   public String toString() {
     return getName();
+  }
+
+  @Override
+  public int compareTo(Thingy another) {
+    return getName().compareTo(another.getName());
   }
 }

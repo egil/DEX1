@@ -1,6 +1,8 @@
 package dk.itu.spcl.dex.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Repository {
@@ -58,11 +60,15 @@ public class Repository {
   }
 
   public ArrayList<Preset> getPresets() {
-    return new ArrayList<Preset>(_presets.values());
+    ArrayList<Preset> list = new ArrayList<Preset>(_presets.values());
+    Collections.sort(list);
+    return list;
   }
   
   public ArrayList<Thingy> getThingies() {
-    return new ArrayList<Thingy>(_thingies.values());
+    ArrayList<Thingy> list = new ArrayList<Thingy>(_thingies.values());
+    Collections.sort(list);
+    return list;
   }
   
   public Thingy getThingy(String name) {
@@ -71,6 +77,26 @@ public class Repository {
   
   public Preset getPreset(String name) {
     return _presets.get(name);
+  }
+  
+  private Preset _dummyPreset;
+  
+  private Thingy _dummyThingy;
+  
+  
+  public Preset getDummyPreset() {
+    if (_dummyPreset == null) {
+      _dummyPreset = new Preset().setName("New preset...");
+    }
+    
+    return _dummyPreset;
+  }
+  
+  public Thingy getDummyThingy() {
+    if (_dummyThingy == null) {
+      _dummyThingy = new Thingy().setName("Add thingy...");
+    }
+    return _dummyThingy;
   }
 
 }
