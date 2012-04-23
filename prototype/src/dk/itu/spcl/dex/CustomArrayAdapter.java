@@ -29,25 +29,44 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
   public View getView(int position, View convertView, ViewGroup parent) {
     View itemView = super.getView(position, convertView, parent);
     TextView textView = (TextView) itemView.findViewById(_textViewResourceId);
-    Drawable icon = getDrawableForListItem(getItem(position));
-    if (icon != null)
-      icon.setBounds(new Rect(0, 0, 20, 24));
-    textView.setCompoundDrawables(icon, null, null, null);
+    T item = getItem(position);
+    Drawable typeIcon = getTypeIconForListItem(item);
+    if (typeIcon != null)
+      typeIcon.setBounds(new Rect(0, 0, 20, 24));
+    Drawable statusIcon = getStatusIconForListItem(item);
+    if (statusIcon != null)
+      statusIcon.setBounds(new Rect(0, 0, 20, 24));
+    textView.setCompoundDrawables(typeIcon, null, statusIcon, null);
     return itemView;
   }
 
-  private Drawable getDrawableForListItem(T listItem) {
+  private Drawable getStatusIconForListItem(T item) {
+    if (!(item instanceof Thingy) || item == _repository.getDummyThingy())
+      return null;
+
+    Thingy thingy = (Thingy) item;
+    int iconId;
+    if (thingy.getStatus())
+      iconId = android.R.drawable.button_onoff_indicator_on;
+    else
+      iconId = android.R.drawable.button_onoff_indicator_off;
+    return getDrawableFromId(iconId);
+  }
+
+  private Drawable getDrawableFromId(int iconId) {
+    return getContext().getResources().getDrawable(iconId);
+  }
+
+  private Drawable getTypeIconForListItem(T listItem) {
     if (listItem == _repository.getDummyPreset()
         || listItem == _repository.getDummyThingy())
-      return getContext().getResources().getDrawable(
-          android.R.drawable.ic_input_add);
+      return getDrawableFromId(android.R.drawable.ic_input_add);
     else if (listItem instanceof Preset)
       return null;
     else if (listItem instanceof Thingy)
       return null;
     else
       return null;
-
   }
 
 }

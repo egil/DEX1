@@ -1,4 +1,4 @@
-package dk.itu.spcl.dex.model;
+package dk.itu.spcl.dex;
 
 import java.io.IOException;
 
@@ -9,9 +9,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import dk.itu.spcl.dex.model.Repository;
+import dk.itu.spcl.dex.model.Thingy;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 public class ThingyUpdateService extends Service implements Runnable {
 
@@ -23,11 +27,13 @@ public class ThingyUpdateService extends Service implements Runnable {
   @Override
   public void onCreate() {
     super.onCreate();
+    Log.i("dex", "Service created");
     _repository = Repository.getInstance();
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    System.out.println("* Service started!");
     startBackgroundUpdates();
     return START_STICKY;
   }
@@ -45,6 +51,7 @@ public class ThingyUpdateService extends Service implements Runnable {
 
   @Override
   public void run() {
+    Log.i("dex", "Run called");
     while (_running) {
       update();
       pause();
@@ -52,6 +59,7 @@ public class ThingyUpdateService extends Service implements Runnable {
   }
 
   private void update() {
+    Log.i("dex", "Updating");
     for (Thingy thingy : _repository.getThingies())
       updateThingy(thingy);
 
@@ -63,9 +71,9 @@ public class ThingyUpdateService extends Service implements Runnable {
       boolean thingyStatus = getStatusFromUrl(thingy.getUrl());
       thingy.setStatus(thingyStatus);
     } catch (ClientProtocolException e) {
-      e.printStackTrace();
+      Log.e("dex", e.toString());
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e("dex", e.toString());
     }
   }
 
@@ -75,7 +83,7 @@ public class ThingyUpdateService extends Service implements Runnable {
     HttpGet get = new HttpGet(url);
     ResponseHandler<String> resp = new BasicResponseHandler();
     String responseText = httpClient.execute(get, resp);
-    return responseText.equals("true");
+    return responseText.equals("1");
   }
 
   private void pause() {

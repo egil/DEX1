@@ -4,6 +4,7 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class HomeActivity extends TabActivity {
@@ -11,8 +12,12 @@ public class HomeActivity extends TabActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.home);
-
     addTabs();
+    startUpdateService();
+  }
+
+  private void startUpdateService() {
+    startService(new Intent(this, ThingyUpdateService.class));
   }
 
   private void addTabs() {
