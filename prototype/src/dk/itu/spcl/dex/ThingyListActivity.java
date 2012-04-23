@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Repository;
-import dk.itu.spcl.dex.model.Repository.UpdateListener;
+import dk.itu.spcl.dex.model.Repository.Listener;
 import dk.itu.spcl.dex.model.Thingy;
 
 public class ThingyListActivity extends ListActivity {
@@ -18,7 +18,7 @@ public class ThingyListActivity extends ListActivity {
   private Repository _repository;
   private final int SCAN_FOR_THINGY_REQUEST_CODE = 1;
   private CustomArrayAdapter<Thingy> _listAdapter;
-  private Repository.UpdateListener _updateListener;
+  private Repository.Listener _repositoryListener;
   private boolean _selectionMode;
 
   @Override
@@ -38,13 +38,13 @@ public class ThingyListActivity extends ListActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    removeUpdateListener();
+    removeRepositoryListener();
   }
 
   private void addRepositoryListener() {
-    _updateListener = new UpdateListener() {
+    _repositoryListener = new Listener() {
       @Override
-      public void repositoryUpdated() {
+      public void structureChanged() {
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -52,12 +52,22 @@ public class ThingyListActivity extends ListActivity {
           }
         });
       }
+
+      @Override
+      public void statusChanged() {
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            _listAdapter.notifyDataSetChanged();
+          }
+        });
+      }
     };
-    _repository.addUpdateListener(_updateListener);
+    _repository.addUpdateListener(_repositoryListener);
   }
 
-  private void removeUpdateListener() {
-    _repository.removeUpdateListener(_updateListener);
+  private void removeRepositoryListener() {
+    _repository.removeUpdateListener(_repositoryListener);
   }
 
   private void addListSelectionListener() {

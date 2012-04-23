@@ -6,15 +6,16 @@ import java.util.HashMap;
 
 public class Repository {
 
-  public interface UpdateListener {
-    public void repositoryUpdated();
+  public interface Listener {
+    public void structureChanged();
+    public void statusChanged();
   }
 
   HashMap<String, Thingy> _thingies = new HashMap<String, Thingy>();
   HashMap<String, Preset> _presets = new HashMap<String, Preset>();
 
   private static Repository _instance;
-  private ArrayList<UpdateListener> _updateListeners = new ArrayList<Repository.UpdateListener>();
+  private ArrayList<Listener> _updateListeners = new ArrayList<Repository.Listener>();
 
   private Repository() {
     //addTestData();
@@ -32,11 +33,11 @@ public class Repository {
     addPreset(samplePreset);
   }
 
-  public void addUpdateListener(UpdateListener listener) {
+  public void addUpdateListener(Listener listener) {
     _updateListeners.add(listener);
   }
 
-  public void removeUpdateListener(UpdateListener listener) {
+  public void removeUpdateListener(Listener listener) {
     _updateListeners.remove(listener);
   }
 
@@ -48,17 +49,23 @@ public class Repository {
 
   public void addThingy(Thingy t) {
     _thingies.put(t.getName(), t);
-    onUpdate();
+    onStructureChanged();
   }
 
   public void addPreset(Preset p) {
     _presets.put(p.getName(), p);
-    onUpdate();
+    onStructureChanged();
   }
 
-  private void onUpdate() {
-    for (UpdateListener listener : _updateListeners) {
-      listener.repositoryUpdated();
+  private void onStructureChanged() {
+    for (Listener listener : _updateListeners) {
+      listener.structureChanged();
+    }
+  }
+  
+  public void onStatusChanged() {
+    for (Listener listener : _updateListeners) {
+     listener.statusChanged(); 
     }
   }
 

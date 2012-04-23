@@ -14,13 +14,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.Repository;
-import dk.itu.spcl.dex.model.Repository.UpdateListener;
+import dk.itu.spcl.dex.model.Repository.Listener;
 
 public class PresetListActivity extends ListActivity {
 
   private Repository _repository;
   private CustomArrayAdapter<Preset> _listAdapter;
-  private Repository.UpdateListener _updateListener;
+  private Repository.Listener _updateListener;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +38,20 @@ public class PresetListActivity extends ListActivity {
   }
 
   private void addRepositoryListener() {
-    _updateListener = new UpdateListener() {
+    _updateListener = new Listener() {
       @Override
-      public void repositoryUpdated() {
+      public void structureChanged() {
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
             populatePresetList();
           }
         });
+      }
+
+      @Override
+      public void statusChanged() {
+        // don't care
       }
     };
     _repository.addUpdateListener(_updateListener);

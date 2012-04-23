@@ -19,6 +19,7 @@ public class PresetActivity extends Activity {
   private Preset _preset;
   private Repository _repository;
   private CustomArrayAdapter<Thingy> _listAdapter;
+  private Repository.Listener _repositoryListener;  
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,39 @@ public class PresetActivity extends Activity {
     setTitle("Preset: " + _preset.getName());
     initializeThingyList();
     addListSelectionListener();
+    addRepositoryListener();
   }
+  
+  @Override
+  protected void onDestroy() {
+    removeRepositoryListener();
+    super.onDestroy();
+  }
+  
+  private void addRepositoryListener() {
+    _repositoryListener = new Repository.Listener() {
+      @Override
+      public void structureChanged() {
+        // don't care
+      }
+
+      @Override
+      public void statusChanged() {
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            _listAdapter.notifyDataSetChanged();
+          }
+        });
+      }
+    };
+    _repository.addUpdateListener(_repositoryListener);
+  }
+
+  private void removeRepositoryListener() {
+    _repository.removeUpdateListener(_repositoryListener);
+  }
+
 
   private void addListSelectionListener() {
     ListView listView = (ListView) findViewById(R.id.presetThingyList);
