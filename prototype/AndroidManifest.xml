@@ -38,7 +38,6 @@
             android:name=".PresetActivity"
             android:label="@string/app_name" />
 
-        <service android:name=".ThingyUpdateService" />
     </application>
 
 </manifest>

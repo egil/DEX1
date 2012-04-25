@@ -18,6 +18,7 @@ public class PresetActivity extends Activity {
   private static final int PICK_THINGY_REQUEST_CODE = 1;
   private Preset _preset;
   private Repository _repository;
+  private ThingyUpdater _thingyUpdater;
   private CustomArrayAdapter<Thingy> _listAdapter;
   private Repository.Listener _repositoryListener;  
 
@@ -27,6 +28,7 @@ public class PresetActivity extends Activity {
     setContentView(R.layout.preset);
 
     _repository = Repository.getInstance();
+    _thingyUpdater = ThingyUpdater.getInstance();
 
     _preset = Repository.getInstance().getPreset(
         getIntent().getStringExtra("preset"));
@@ -34,6 +36,18 @@ public class PresetActivity extends Activity {
     initializeThingyList();
     addListSelectionListener();
     addRepositoryListener();
+  }
+  
+  @Override
+  protected void onPause() {
+    _thingyUpdater.cancelUpdatesFor(this);
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    _thingyUpdater.requestUpdatesFor(this);
+    super.onResume();
   }
   
   @Override

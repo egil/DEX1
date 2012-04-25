@@ -16,6 +16,7 @@ import dk.itu.spcl.dex.model.Thingy;
 public class ThingyListActivity extends ListActivity {
 
   private Repository _repository;
+  private ThingyUpdater _thingyUpdater;
   private final int SCAN_FOR_THINGY_REQUEST_CODE = 1;
   private CustomArrayAdapter<Thingy> _listAdapter;
   private Repository.Listener _repositoryListener;
@@ -25,6 +26,7 @@ public class ThingyListActivity extends ListActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     _repository = Repository.getInstance();
+    _thingyUpdater = ThingyUpdater.getInstance();
 
     _selectionMode = getIntent().getBooleanExtra("selectionMode", false);
     if (_selectionMode)
@@ -35,6 +37,18 @@ public class ThingyListActivity extends ListActivity {
     addListSelectionListener();
   }
 
+  @Override
+  protected void onPause() {
+    _thingyUpdater.cancelUpdatesFor(this);
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    _thingyUpdater.requestUpdatesFor(this);
+    super.onResume();
+  }
+  
   @Override
   protected void onDestroy() {
     super.onDestroy();

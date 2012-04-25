@@ -4,20 +4,29 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TabHost;
 
 public class HomeActivity extends TabActivity {
+  
+  private ThingyUpdater _thingyUpdater;
 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    _thingyUpdater = ThingyUpdater.getInstance();
     setContentView(R.layout.home);
     addTabs();
-    startUpdateService();
   }
 
-  private void startUpdateService() {
-    startService(new Intent(this, ThingyUpdateService.class));
+  @Override
+  protected void onPause() {
+    _thingyUpdater.cancelUpdatesFor(this);
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    _thingyUpdater.requestUpdatesFor(this);
+    super.onResume();
   }
 
   private void addTabs() {
