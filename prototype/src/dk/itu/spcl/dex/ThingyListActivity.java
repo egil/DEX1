@@ -10,16 +10,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Repository;
-import dk.itu.spcl.dex.model.Repository.Listener;
 import dk.itu.spcl.dex.model.Thingy;
 
-public class ThingyListActivity extends ListActivity {
+public class ThingyListActivity extends ListActivity implements
+    Repository.Listener {
 
   private Repository _repository;
   private ThingyUpdater _thingyUpdater;
   private final int SCAN_FOR_THINGY_REQUEST_CODE = 1;
   private CustomArrayAdapter<Thingy> _listAdapter;
-  private Repository.Listener _repositoryListener;
   private boolean _selectionMode;
 
   @Override
@@ -33,7 +32,7 @@ public class ThingyListActivity extends ListActivity {
       setTitle("Select a thingy");
 
     initializeThingyList();
-    addRepositoryListener();
+    _repository.addListener(this);
     addListSelectionListener();
   }
 
@@ -48,40 +47,31 @@ public class ThingyListActivity extends ListActivity {
     _thingyUpdater.requestUpdatesFor(this);
     super.onResume();
   }
-  
+
   @Override
   protected void onDestroy() {
+    _repository.removeListener(this);
     super.onDestroy();
-    removeRepositoryListener();
   }
 
-  private void addRepositoryListener() {
-    _repositoryListener = new Listener() {
+  @Override
+  public void repositoryStructureChanged() {
+    runOnUiThread(new Runnable() {
       @Override
-      public void structureChanged() {
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            populateThingyList();
-          }
-        });
+      public void run() {
+        populateThingyList();
       }
-
-      @Override
-      public void statusChanged() {
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            _listAdapter.notifyDataSetChanged();
-          }
-        });
-      }
-    };
-    _repository.addUpdateListener(_repositoryListener);
+    });
   }
 
-  private void removeRepositoryListener() {
-    _repository.removeUpdateListener(_repositoryListener);
+  @Override
+  public void repositoryStatusChanged() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        _listAdapter.notifyDataSetChanged();
+      }
+    });
   }
 
   private void addListSelectionListener() {

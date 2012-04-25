@@ -15,16 +15,18 @@ public final class R {
         public static final int ic_tab_default=0x7f020001;
     }
     public static final class id {
-        public static final int addThingyMenu=0x7f060003;
+        public static final int addThingyMenu=0x7f060004;
         public static final int listTextView=0x7f060000;
-        public static final int newPresetMenu=0x7f060002;
-        public static final int newThingyMenu=0x7f060004;
+        public static final int newPresetMenu=0x7f060003;
+        public static final int newThingyMenu=0x7f060005;
         public static final int presetThingyList=0x7f060001;
+        public static final int thingyToggleButton=0x7f060002;
     }
     public static final class layout {
         public static final int default_list_item=0x7f030000;
         public static final int home=0x7f030001;
         public static final int preset=0x7f030002;
+        public static final int simple_thingy=0x7f030003;
     }
     public static final class menu {
         public static final int presetlistmenu=0x7f050000;
@@ -37,6 +39,7 @@ public final class R {
         public static final int newPresetMenu=0x7f040003;
         public static final int newThingyMenu=0x7f040001;
         public static final int presetActivate=0x7f040002;
+        public static final int presetIntroText=0x7f040006;
         public static final int renamePresetMenu=0x7f040005;
     }
 }

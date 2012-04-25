@@ -7,15 +7,15 @@ import java.util.HashMap;
 public class Repository {
 
   public interface Listener {
-    public void structureChanged();
-    public void statusChanged();
+    public void repositoryStructureChanged();
+    public void repositoryStatusChanged();
   }
 
   HashMap<String, Thingy> _thingies = new HashMap<String, Thingy>();
   HashMap<String, Preset> _presets = new HashMap<String, Preset>();
 
   private static Repository _instance;
-  private ArrayList<Listener> _updateListeners = new ArrayList<Repository.Listener>();
+  private ArrayList<Listener> _listeners = new ArrayList<Repository.Listener>();
 
   private Repository() {
     //addTestData();
@@ -33,12 +33,12 @@ public class Repository {
     addPreset(samplePreset);
   }
 
-  public void addUpdateListener(Listener listener) {
-    _updateListeners.add(listener);
+  public void addListener(Listener listener) {
+    _listeners.add(listener);
   }
 
-  public void removeUpdateListener(Listener listener) {
-    _updateListeners.remove(listener);
+  public void removeListener(Listener listener) {
+    _listeners.remove(listener);
   }
 
   public static Repository getInstance() {
@@ -58,14 +58,14 @@ public class Repository {
   }
 
   private void onStructureChanged() {
-    for (Listener listener : _updateListeners) {
-      listener.structureChanged();
+    for (Listener listener : _listeners) {
+      listener.repositoryStructureChanged();
     }
   }
   
   public void onStatusChanged() {
-    for (Listener listener : _updateListeners) {
-     listener.statusChanged(); 
+    for (Listener listener : _listeners) {
+     listener.repositoryStatusChanged(); 
     }
   }
 

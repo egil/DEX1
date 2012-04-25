@@ -2,19 +2,17 @@ package dk.itu.spcl.dex;
 
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Repository.Listener;
+import dk.itu.spcl.dex.tools.UITools;
 
 public class PresetListActivity extends ListActivity {
 
@@ -40,7 +38,7 @@ public class PresetListActivity extends ListActivity {
   private void addRepositoryListener() {
     _updateListener = new Listener() {
       @Override
-      public void structureChanged() {
+      public void repositoryStructureChanged() {
         runOnUiThread(new Runnable() {
           @Override
           public void run() {
@@ -50,15 +48,15 @@ public class PresetListActivity extends ListActivity {
       }
 
       @Override
-      public void statusChanged() {
+      public void repositoryStatusChanged() {
         // don't care
       }
     };
-    _repository.addUpdateListener(_updateListener);
+    _repository.addListener(_updateListener);
   }
 
   private void removeUpdateListener() {
-    _repository.removeUpdateListener(_updateListener);
+    _repository.removeListener(_updateListener);
   }
 
   private void addListSelectionListener() {
@@ -102,26 +100,13 @@ public class PresetListActivity extends ListActivity {
   }
 
   private void newPreset() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle("New preset");
-    alert.setMessage("Name:");
-    final EditText input = new EditText(this);
-    alert.setView(input);
-
-    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int whichButton) {
-        String name = input.getText().toString();
-        if (name.length() > 0)
-          addPreset(name);
+    UITools.promptForString(this, "New preset", "Name:", new UITools.PromptResultHandler() {
+      @Override
+      public void closed(boolean accepted, String value) {
+        if (accepted && value.length() > 0)
+          addPreset(value);
       }
     });
-
-    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int whichButton) {
-        // Canceled.
-      }
-    });
-    alert.show();
   }
 
   protected void addPreset(String name) {
@@ -129,5 +114,4 @@ public class PresetListActivity extends ListActivity {
     _repository.addPreset(newPreset);
     startPresetActivity(newPreset);
   }
-
 }

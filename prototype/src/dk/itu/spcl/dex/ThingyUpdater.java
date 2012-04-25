@@ -5,9 +5,11 @@ import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
 
+
 import android.util.Log;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
+import dk.itu.spcl.dex.tools.HttpTools;
 
 public class ThingyUpdater implements Runnable {
 
@@ -27,7 +29,7 @@ public class ThingyUpdater implements Runnable {
     }
     return _instance;
   }
-
+ 
   public void requestUpdatesFor(Object me) {
     _listeners.add(me);
     toggleUpdatesAsNeeded();
@@ -77,7 +79,7 @@ public class ThingyUpdater implements Runnable {
 
   private void updateThingy(Thingy thingy) {
     try {
-      boolean thingyStatus = getStatusFromUrl(thingy.getUrl());
+      boolean thingyStatus = getStatusFromUrl(Settings.WIZARD_URL + thingy.getUrl());
       thingy.setStatus(thingyStatus);
     } catch (ClientProtocolException e) {
       Log.e("dex", e.toString());

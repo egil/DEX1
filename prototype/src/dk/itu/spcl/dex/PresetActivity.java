@@ -13,14 +13,13 @@ import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
 
-public class PresetActivity extends Activity {
+public class PresetActivity extends Activity implements Repository.Listener {
 
   private static final int PICK_THINGY_REQUEST_CODE = 1;
   private Preset _preset;
   private Repository _repository;
   private ThingyUpdater _thingyUpdater;
   private CustomArrayAdapter<Thingy> _listAdapter;
-  private Repository.Listener _repositoryListener;  
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +34,9 @@ public class PresetActivity extends Activity {
     setTitle("Preset: " + _preset.getName());
     initializeThingyList();
     addListSelectionListener();
-    addRepositoryListener();
+    _repository.addListener(this);
   }
-  
+
   @Override
   protected void onPause() {
     _thingyUpdater.cancelUpdatesFor(this);
@@ -49,37 +48,27 @@ public class PresetActivity extends Activity {
     _thingyUpdater.requestUpdatesFor(this);
     super.onResume();
   }
-  
+
   @Override
   protected void onDestroy() {
-    removeRepositoryListener();
+    _repository.removeListener(this);
     super.onDestroy();
   }
-  
-  private void addRepositoryListener() {
-    _repositoryListener = new Repository.Listener() {
-      @Override
-      public void structureChanged() {
-        // don't care
-      }
 
-      @Override
-      public void statusChanged() {
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            _listAdapter.notifyDataSetChanged();
-          }
-        });
-      }
-    };
-    _repository.addUpdateListener(_repositoryListener);
+  @Override
+  public void repositoryStructureChanged() {
+    // don't care
   }
 
-  private void removeRepositoryListener() {
-    _repository.removeUpdateListener(_repositoryListener);
+  @Override
+  public void repositoryStatusChanged() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        _listAdapter.notifyDataSetChanged();
+      }
+    });
   }
-
 
   private void addListSelectionListener() {
     ListView listView = (ListView) findViewById(R.id.presetThingyList);
