@@ -17,9 +17,11 @@ if (strpos($filename, ".") !== false)
 else if (strpos($filename, "\\") !== false)
   die('No!');
 
-$f = fopen($filename, 'w');
-fwrite($f, $status);
-fclose($f);
+if ($filename != "") {
+  $f = fopen($filename, 'w');
+  fwrite($f, $status);
+  fclose($f);
+}
 
 if ($setLast) {
   $flast = fopen('last', 'w');

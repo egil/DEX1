@@ -8,6 +8,7 @@ public class Repository {
 
   public interface Listener {
     public void repositoryStructureChanged();
+
     public void repositoryStatusChanged();
   }
 
@@ -18,19 +19,6 @@ public class Repository {
   private ArrayList<Listener> _listeners = new ArrayList<Repository.Listener>();
 
   private Repository() {
-    //addTestData();
-  }
-
-  @SuppressWarnings("unused")
-  private void addTestData() {
-    addThingy(new Thingy().setName("test thingy"));
-    addThingy(new Thingy().setName("other thingy"));
-    addThingy(new Thingy().setName("third thingy"));
-
-    Preset samplePreset = new Preset().setName("sample preset");
-    samplePreset.addThingy(getThingies().get(0));
-    samplePreset.addThingy(getThingies().get(1));
-    addPreset(samplePreset);
   }
 
   public void addListener(Listener listener) {
@@ -62,10 +50,10 @@ public class Repository {
       listener.repositoryStructureChanged();
     }
   }
-  
+
   public void onStatusChanged() {
     for (Listener listener : _listeners) {
-     listener.repositoryStatusChanged(); 
+      listener.repositoryStatusChanged();
     }
   }
 
@@ -74,39 +62,50 @@ public class Repository {
     Collections.sort(list);
     return list;
   }
-  
+
   public ArrayList<Thingy> getThingies() {
     ArrayList<Thingy> list = new ArrayList<Thingy>(_thingies.values());
     Collections.sort(list);
     return list;
   }
-  
+
   public Thingy getThingy(String name) {
     return _thingies.get(name);
   }
-  
+
   public Preset getPreset(String name) {
     return _presets.get(name);
   }
-  
+
   private Preset _dummyPreset;
-  
   private Thingy _dummyThingy;
-  
-  
+  private PresetEntry _dummyPresetEntry;
+
   public Preset getDummyPreset() {
     if (_dummyPreset == null) {
       _dummyPreset = new Preset().setName("New preset...");
     }
-    
+
     return _dummyPreset;
   }
-  
+
   public Thingy getDummyThingy() {
     if (_dummyThingy == null) {
-      _dummyThingy = new Thingy().setName("Add thingy...");
+      _dummyThingy = new Thingy().setName("Install new thingy...");
     }
     return _dummyThingy;
+  }
+
+  public PresetEntry getDummyPresetEntry() {
+    if (_dummyPresetEntry == null) {
+      _dummyPresetEntry = new PresetEntry() {
+        @Override
+        public String toString() {
+          return "Add thingy to preset...";
+        }
+      };
+    }
+    return _dummyPresetEntry;
   }
 
 }

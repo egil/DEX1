@@ -38,6 +38,7 @@ public class ThingyActivity extends Activity implements Repository.Listener {
     ToggleButton button = (ToggleButton) v;
     boolean on = button.isChecked();
     _thingyWriter.setStatus(_thingy, on);
+    _thingyWriter.flushWizard();
   }
   
   @Override 

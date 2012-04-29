@@ -100,7 +100,7 @@ public class PresetListActivity extends ListActivity {
   }
 
   private void newPreset() {
-    UITools.promptForString(this, "New preset", "Name:", new UITools.PromptResultHandler() {
+    UITools.promptForString(this, "New preset", "Name:", new UITools.PromptResultHandler<String>() {
       @Override
       public void closed(boolean accepted, String value) {
         if (accepted && value.length() > 0)

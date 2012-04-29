@@ -10,8 +10,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import dk.itu.spcl.dex.model.Preset;
+import dk.itu.spcl.dex.model.PresetEntry;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
+import dk.itu.spcl.dex.tools.UITools;
 
 public class PresetActivity extends Activity implements Repository.Listener {
 
@@ -19,7 +21,8 @@ public class PresetActivity extends Activity implements Repository.Listener {
   private Preset _preset;
   private Repository _repository;
   private ThingyUpdater _thingyUpdater;
-  private CustomArrayAdapter<Thingy> _listAdapter;
+  private ThingyStatusWriter _thingyWriter;
+  private CustomArrayAdapter<PresetEntry> _listAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,7 @@ public class PresetActivity extends Activity implements Repository.Listener {
 
     _repository = Repository.getInstance();
     _thingyUpdater = ThingyUpdater.getInstance();
+    _thingyWriter = new ThingyStatusWriter();
 
     _preset = Repository.getInstance().getPreset(
         getIntent().getStringExtra("preset"));
@@ -75,20 +79,29 @@ public class PresetActivity extends Activity implements Repository.Listener {
     listView.setOnItemClickListener(new OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        Thingy thingy = (Thingy) parent.getItemAtPosition(position);
-        onThingySelected(thingy);
+        PresetEntry entry = (PresetEntry) parent.getItemAtPosition(position);
+        onEntrySelected(entry);
       }
     });
   }
 
-  protected void onThingySelected(Thingy thingy) {
-    if (thingy == _repository.getDummyThingy())
-      addThingy();
+  protected void onEntrySelected(PresetEntry entry) {
+    if (entry == _repository.getDummyPresetEntry())
+      addEntry();
+  }
+  
+  public void onActivatePreset(View view) {
+    for (PresetEntry entry : _preset.getEntries())
+    {
+      _thingyWriter.setStatus(entry.getThingy(), entry.getStatus());
+      _thingyWriter.flushWizard();
+    }
   }
 
   private void initializeThingyList() {
-    _listAdapter = new CustomArrayAdapter<Thingy>(this,
-        R.layout.default_list_item, R.id.listTextView, new ArrayList<Thingy>());
+    _listAdapter = new CustomArrayAdapter<PresetEntry>(this,
+        R.layout.default_list_item, R.id.listTextView,
+        new ArrayList<PresetEntry>());
     ListView listView = (ListView) findViewById(R.id.presetThingyList);
     listView.setAdapter(_listAdapter);
 
@@ -97,14 +110,14 @@ public class PresetActivity extends Activity implements Repository.Listener {
 
   private void populateThingyList() {
     _listAdapter.clear();
-    for (Thingy t : _preset.getThingies())
-      _listAdapter.add(t);
+    for (PresetEntry entry : _preset.getEntries())
+      _listAdapter.add(entry);
 
-    _listAdapter.add(_repository.getDummyThingy());
+    _listAdapter.add(_repository.getDummyPresetEntry());
     _listAdapter.notifyDataSetChanged();
   }
 
-  private void addThingy() {
+  private void addEntry() {
     startActivityForResult(new Intent(this, ThingyListActivity.class).putExtra(
         "selectionMode", true), PICK_THINGY_REQUEST_CODE);
   }
@@ -113,11 +126,20 @@ public class PresetActivity extends Activity implements Repository.Listener {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // super.onActivityResult(requestCode, resultCode, data);
     if (resultCode != RESULT_CANCELED) {
-      Thingy selected = _repository.getThingy(data.getExtras().getString(
+      final Thingy selected = _repository.getThingy(data.getExtras().getString(
           "thingy"));
-      _preset.addThingy(selected);
-      populateThingyList();
+      UITools.promptForBoolean(this, "Add thingy to preset",
+          "When activating this preset, this thingy should be:",
+          new UITools.PromptResultHandler<Boolean>() {
+            @Override
+            public void closed(boolean accepted, Boolean value) {
+              if (accepted && value != null) {
+                _preset.addEntry(new PresetEntry().setThingy(selected)
+                    .setStatus(value));
+                populateThingyList();
+              }
+            }
+          });
     }
   }
-
 }

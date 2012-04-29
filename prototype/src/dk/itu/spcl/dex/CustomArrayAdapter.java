@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import dk.itu.spcl.dex.model.Preset;
+import dk.itu.spcl.dex.model.PresetEntry;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
 
@@ -41,10 +42,17 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
   }
 
   private Drawable getStatusIconForListItem(T item) {
-    if (!(item instanceof Thingy) || item == _repository.getDummyThingy())
+    if (!(item instanceof Thingy || item instanceof PresetEntry)
+        || item == _repository.getDummyThingy()
+        || item == _repository.getDummyPresetEntry())
       return null;
 
-    Thingy thingy = (Thingy) item;
+    Thingy thingy;
+    if (item instanceof PresetEntry)
+      thingy = ((PresetEntry) item).getThingy();
+    else
+      thingy = (Thingy) item;
+
     int iconId;
     if (thingy.getStatus())
       iconId = android.R.drawable.button_onoff_indicator_on;
@@ -59,7 +67,8 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
 
   private Drawable getTypeIconForListItem(T listItem) {
     if (listItem == _repository.getDummyPreset()
-        || listItem == _repository.getDummyThingy())
+        || listItem == _repository.getDummyThingy()
+        || listItem == _repository.getDummyPresetEntry())
       return getDrawableFromId(android.R.drawable.ic_input_add);
     else if (listItem instanceof Preset)
       return null;

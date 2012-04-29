@@ -25,6 +25,7 @@ public class ScanActivity extends Activity {
 
     TextView textview = new TextView(this);
     textview.setText("Hold your phone close to the device you want to add.");
+    textview.setTextSize(16);
     setContentView(textview);
 
     performDummyScan();
@@ -44,7 +45,7 @@ public class ScanActivity extends Activity {
           @Override
           public void run() {
             UITools.promptForString(ScanActivity.this, "Add thingy", "Name:",
-                new UITools.PromptResultHandler() {
+                new UITools.PromptResultHandler<String>() {
                   @Override
                   public void closed(boolean accepted, String value) {
                     if (accepted && value.length() > 0) {

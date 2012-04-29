@@ -38,7 +38,8 @@
       function updateLast() {
         $.getJSON('last', function(data) {
           if (data != null) {
-            $('#' + data[0]).prop('checked', data[1] == "1");
+            // $('#' + data[0]).prop('checked', data[1] == "1");
+            updateAll();
             $.get('write.php?clear=1');
           }
         });

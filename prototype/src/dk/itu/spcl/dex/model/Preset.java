@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class Preset implements Comparable<Preset> {
 
-  private ArrayList<Thingy> _thingies;
+  private ArrayList<PresetEntry> _entries;
   private String _name;
 
   public Preset() {
-    _thingies = new ArrayList<Thingy>();
+    _entries = new ArrayList<PresetEntry>();
   }
 
   public Preset setName(String name) {
@@ -20,12 +20,12 @@ public class Preset implements Comparable<Preset> {
     return _name;
   }
 
-  public void addThingy(Thingy t) {
-    _thingies.add(t);
+  public void addEntry(PresetEntry e) {
+    _entries.add(e);
   }
 
-  public ArrayList<Thingy> getThingies() {
-    return _thingies;
+  public ArrayList<PresetEntry> getEntries() {
+    return _entries;
   }
 
   @Override
