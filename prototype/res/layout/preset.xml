@@ -7,14 +7,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:text="@+string/presetIntroText" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onActivatePreset"
-        android:text="@+string/presetActivate" />
+        android:text="@+string/presetActivate" 
+        android:textSize="17sp"/>
 
     <ListView
         android:id="@+id/presetThingyList"

@@ -13,6 +13,12 @@ public final class R {
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
         public static final int ic_tab_default=0x7f020001;
+        public static final int off=0x7f020002;
+        public static final int off_check=0x7f020003;
+        public static final int off_nocheck=0x7f020004;
+        public static final int on=0x7f020005;
+        public static final int on_check=0x7f020006;
+        public static final int on_nocheck=0x7f020007;
     }
     public static final class id {
         public static final int addThingyMenu=0x7f060004;

@@ -22,12 +22,13 @@ public class ScanActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
+    
     _repository = Repository.getInstance();
 
+    setTitle("Install new thingy");
     TextView textview = new TextView(this);
     textview.setText("Hold your phone close to the device you want to add.");
-    textview.setTextSize(16);
+    textview.setTextSize(18);
     setContentView(textview);
 
     performDummyScan();

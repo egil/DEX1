@@ -5,9 +5,11 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import dk.itu.spcl.dex.model.Preset;
 import dk.itu.spcl.dex.model.PresetEntry;
@@ -18,6 +20,10 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
 
   private Repository _repository;
   private int _textViewResourceId;
+
+  private enum CheckStatus {
+    NONE, CHECK, FAIL
+  };
 
   public CustomArrayAdapter(Context context, int resource,
       int textViewResourceId, List<T> objects) {
@@ -31,14 +37,20 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
     View itemView = super.getView(position, convertView, parent);
     TextView textView = (TextView) itemView.findViewById(_textViewResourceId);
     T item = getItem(position);
+
+    setDrawablesForTextView(textView, item);
+
+    return itemView;
+  }
+
+  private void setDrawablesForTextView(TextView textView, T item) {
     Drawable typeIcon = getTypeIconForListItem(item);
     if (typeIcon != null)
-      typeIcon.setBounds(new Rect(0, 0, 20, 24));
+      typeIcon.setBounds(new Rect(0, 0, 36, 36));
     Drawable statusIcon = getStatusIconForListItem(item);
     if (statusIcon != null)
-      statusIcon.setBounds(new Rect(0, 0, 20, 24));
+      statusIcon.setBounds(new Rect(0, 0, 36, 36));
     textView.setCompoundDrawables(typeIcon, null, statusIcon, null);
-    return itemView;
   }
 
   private Drawable getStatusIconForListItem(T item) {
@@ -53,12 +65,33 @@ public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
     else
       thingy = (Thingy) item;
 
-    int iconId;
-    if (thingy.getStatus())
-      iconId = android.R.drawable.button_onoff_indicator_on;
-    else
-      iconId = android.R.drawable.button_onoff_indicator_off;
+    boolean on = thingy.getStatus();
+    CheckStatus checkStatus = getCheckStatus(item);
+
+    int iconId = -1;
+    switch (checkStatus) {
+    case CHECK:
+      iconId = on ? R.drawable.on_check : R.drawable.off_check;
+      break;
+    case FAIL:
+      iconId = on ? R.drawable.on_nocheck : R.drawable.off_nocheck;
+      break;
+    case NONE:
+      iconId = on ? R.drawable.on : R.drawable.off;
+      break;
+    }
     return getDrawableFromId(iconId);
+  }
+
+  private CheckStatus getCheckStatus(T item) {
+    if (!(item instanceof PresetEntry))
+      return CheckStatus.NONE;
+
+    PresetEntry entry = (PresetEntry) item;
+    if (entry.getStatus() != entry.getThingy().getStatus())
+      return CheckStatus.FAIL;
+    else
+      return CheckStatus.CHECK;
   }
 
   private Drawable getDrawableFromId(int iconId) {

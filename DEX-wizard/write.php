@@ -25,7 +25,7 @@ if ($filename != "") {
 
 if ($setLast) {
   $flast = fopen('last', 'w');
-  fwrite($flast, "[ \"$filename\", \"$status\" ]");
+  fwrite($flast, "changed!");
   fclose($flast);
 }
 
