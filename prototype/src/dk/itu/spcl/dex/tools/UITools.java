@@ -3,6 +3,7 @@ package dk.itu.spcl.dex.tools;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.InputType;
 import android.widget.EditText;
 import android.widget.ToggleButton;
 
@@ -19,6 +20,7 @@ public class UITools {
     alert.setMessage(label);
     final EditText input = new EditText(context);
     input.setSingleLine();
+    input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_CLASS_TEXT);
     alert.setView(input);
 
     alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -44,9 +46,10 @@ public class UITools {
     alert.setTitle(caption);
     alert.setMessage(label);
     final ToggleButton input = new ToggleButton(context);
+    input.setTextOn("On/open");
+    input.setTextOff("Off/closed");
+    input.setChecked(false);
     alert.setView(input);
-    input.setTextOn("ON");
-    input.setTextOff("OFF");
 
     alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       @Override

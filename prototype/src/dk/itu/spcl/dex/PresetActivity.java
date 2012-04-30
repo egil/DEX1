@@ -89,10 +89,9 @@ public class PresetActivity extends Activity implements Repository.Listener {
     if (entry == _repository.getDummyPresetEntry())
       addEntry();
   }
-  
+
   public void onActivatePreset(View view) {
-    for (PresetEntry entry : _preset.getEntries())
-    {
+    for (PresetEntry entry : _preset.getEntries()) {
       _thingyWriter.setStatus(entry.getThingy(), entry.getStatus());
       _thingyWriter.flushWizard();
     }
@@ -129,7 +128,7 @@ public class PresetActivity extends Activity implements Repository.Listener {
       final Thingy selected = _repository.getThingy(data.getExtras().getString(
           "thingy"));
       UITools.promptForBoolean(this, "Add thingy to preset",
-          "When activating this preset, this thingy should be:",
+          "Activating the preset should switch this thingy:",
           new UITools.PromptResultHandler<Boolean>() {
             @Override
             public void closed(boolean accepted, Boolean value) {

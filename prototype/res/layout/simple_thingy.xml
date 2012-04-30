@@ -7,8 +7,8 @@
         android:id="@+id/thingyToggleButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textOn="ON"
-        android:textOff="OFF"
+        android:textOn="On/open"
+        android:textOff="Off/closed"
         android:text="" 
         android:onClick="thingyToggleButtonClicked"/>
 

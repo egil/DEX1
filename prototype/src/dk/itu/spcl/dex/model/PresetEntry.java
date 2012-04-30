@@ -25,7 +25,7 @@ public class PresetEntry {
   
   @Override
   public String toString() {
-    return _thingy.toString() + " (" + (_status ? "on" : "off") + ")";
+    return _thingy.toString() + " (" + (_status ? "on/open" : "off/closed") + ")";
   }
 
 }
