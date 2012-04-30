@@ -10,6 +10,9 @@ import dk.itu.spcl.dex.tools.HttpTools;
 public class ThingyStatusWriter {
 
   public void setStatus(Thingy thingy, boolean status) {
+    if (thingy.isReadOnly())
+      return;
+    
     String url = Settings.WIZARD_URL + "write.php?thingy=" + thingy.getUrl()
         + "&status=" + (status ? 1 : 0);
     try {

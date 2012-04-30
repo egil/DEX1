@@ -103,6 +103,9 @@ public class ThingyListActivity extends ListActivity implements
   }
 
   private void startThingyActivity(Thingy thingy) {
+    if (thingy.isReadOnly())
+      return;
+    
     Intent intent = new Intent(this, ThingyActivity.class).putExtra("thingy",
         thingy.getName());
     startActivity(intent);

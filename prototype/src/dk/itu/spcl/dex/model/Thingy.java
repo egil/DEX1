@@ -5,6 +5,7 @@ public class Thingy implements Comparable<Thingy> {
   private String _name;
   private String _url;
   private boolean _status;
+  private boolean _isReadOnly;
 
   public Thingy() {
   }
@@ -37,6 +38,15 @@ public class Thingy implements Comparable<Thingy> {
   
   public Thingy setStatus(boolean status) {
     _status = status;
+    return this;
+  }
+  
+  public boolean isReadOnly() {
+    return _isReadOnly;
+  }
+  
+  public Thingy setReadOnly(boolean readOnly) {
+    _isReadOnly = readOnly;
     return this;
   }
   

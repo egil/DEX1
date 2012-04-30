@@ -22,7 +22,7 @@ public class ScanActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    
+
     _repository = Repository.getInstance();
 
     setTitle("Install new thingy");
@@ -37,6 +37,9 @@ public class ScanActivity extends Activity {
   private void addMockThingy(String name) {
     Thingy thingy = new Thingy().setName(name).setUrl(
         "status_" + _thingiesReturned);
+    if (_thingiesReturned > 0)
+      thingy.setReadOnly(true);
+
     _repository.addThingy(thingy);
     _thingiesReturned++;
     returnScannedThingy(thingy);
