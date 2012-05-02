@@ -64,7 +64,7 @@ public class ScanActivity extends Activity {
     super.onDestroy();
   }
 
-  private static int _thingiesReturned = 0;
+  public static int _thingiesReturned = 0;
 
   private void performDummyScan() {
     if (_thingiesReturned >= 3)

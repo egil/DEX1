@@ -7,5 +7,6 @@
     <string name="addThingyMenu">Add thingy</string>
     <string name="renamePresetMenu">Rename</string>
     <string name="presetIntroText">A preset allows you to set the status of several thingies at once.</string>
+    <string name="resetMenu">Reset app</string>
 
 </resources>
