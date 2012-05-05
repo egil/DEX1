@@ -1,0 +1,4 @@
+The WiFly library is included here, with the modified join method described at 
+http://forum.sparkfun.com/viewtopic.php?f=32&t=28163
+
+To be used with Arduino version 0.23
