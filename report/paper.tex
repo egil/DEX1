@@ -1,72 +1,68 @@
-\documentclass{ubicomp2011}
-\usepackage{times}
-\usepackage{url}
-\usepackage{graphics}
-\usepackage{color}
-\usepackage[pdftex]{hyperref}
-\hypersetup{%
-pdftitle={Your Title}, pdfauthor={Your Authors}, pdfkeywords={your
-keywords}, bookmarksnumbered, pdfstartview={FitH}, colorlinks,
-citecolor=black, filecolor=black, linkcolor=black, urlcolor=black,
-breaklinks=true, }
-\newcommand{\comment}[1]{}
-\definecolor{Orange}{rgb}{1,0.5,0}
-\newcommand{\todo}[1]{\textsf{\textbf{\textcolor{Orange}{[[#1]]}}}}
-
-\pagenumbering{arabic}  % Arabic page numbers for submission.  Remove this line to eliminate page numbers for the camera ready copy
+\documentclass{article}
 
 \begin{document}
-% to make various LaTeX processors do the right thing with page size
-\special{papersize=8.5in,11in}
-\setlength{\paperheight}{11in}
-\setlength{\paperwidth}{8.5in}
-\setlength{\pdfpageheight}{\paperheight}
-\setlength{\pdfpagewidth}{\paperwidth}
-
-% use this command to override the default ACM copyright statement
-% (e.g. for preprints). Remove for camera ready copy.
-\toappear{Paper submitted for evaluation in the Pervasive Computing Course, Spring
-2012. The IT University of Copenhagen.}
-
-\title{Thingies for Dummies}
-\numberofauthors{2}
-\author{
-  \alignauthor David Thomas\\
-    \affaddr{Author}\\
-    \affaddr{IT University of Copenhagen}\\
-    \email{dtho@itu.dk}
- \alignauthor Egil Kristoffer Gorm Hansen\\
-    \affaddr{Author}\\
-    \affaddr{IT University of Copenhagen}\\
-    \email{ekri@itu.dk}  }
-\maketitle
 
 \begin{abstract}
-  TODO
+  TODOlish
 \end{abstract}
-
-\keywords{TDOD}
-
-\category{TODO}{TODO}{TODO}.
 
 \section{Introduction}
 
-\section{Background/Related Work}
-Seven problems with Smart Homes (ref)
+More than 20 years after Weiser first defined ubiquitous computing \cite{Weiser1991} we have yet to see smart homes become commonplace. We believe this is largely due to smart home technology being inaccessible and too complicated for everyday users, and both price, perceived lack of advantages, and challenges in learning new technology scare users away.
 
-\section{Thinges for Dummies Architecture}
+We propose a smart home infrastructure which bases itself on hardware that exist in most homes today -- Wifi and smart phones -- and use simple, open, interoperable technologies such as HTTP and HTML5's web sockets to provide the communication backbone of the architecture. Each individual device, or ``thingy'', as we have dubbed them, is supposed to be simple to comprehend, install, and use, but provide value nonetheless. We call this concept \textit{Thingies for Dummies}\footnote{This is a reference to the \textit{For Dummies} book series that tries to present non-intimidating guides to various topics and that always contains the subtitle ``A Reference for the Rest of Us!''.}.
 
-\subsection{}
+Edwards and Grinter describe in their 2001 paper \cite{Edwards01athome} seven challenges facing the adoption of smart home technology\footnote{Challenge One: \textit{The `Accidentally' Smart Home}. Challenge Two: \textit{Impromptu Interoperability (islands of functionality)}. Challenge Three: \textit{No Systems Administrator}. Challenge Four: \textit{Designing for Domestic Use}. Challenge Five: \textit{Social Implications of Aware Home Technologies}. Challenge Six: \textit{Reliability}. Challenge Seven: \textit{Inference in the Presence of Ambiguity}.}, and we believe that through the overarching theme of `simple’ in our proposal -- simple architechure and simple thingies -- we are able to answer the first six challenges, at least partly. Simplifying things does imply giving up on the dream of a fully automated intelligence home for the time being, but our proposed infrastructure does not prevent a home from becoming gradually more automated or intelligent.
 
-\section{Evaluation}
+\paragraph{TODO in this section:}
+\begin{itemize}
+\item Overview of the coming sections
+\item Discussion of smart homes vs smart office (or discussion)
+\item Scenario (lock down)
+\item Should we include a more detailed description of why we solve six challenges, or is that for the discussion section?
+\end{itemize}
 
-\section{Discussion}
+\section{Thinges for Dummies Infrastructure}
 
-\section{Future Work}
+The key design decision for \textit{Thingies for Dummies} was the it should be simple and  inexpensive to get started retrofitting an existing house with thingies and that it should be independent of specific hardware and software platforms. This ment not requiring a dedicated controller, and relying on the existing infrastructure in the home for handling communication and control, i.e. a Wifi network. Using the home’s Wifi, assuming it is protected with a passphrase, adds a virtual boundary to the smart home, a boundary that users understand because they understand that you cannot access the Wifi without the passphrase. [NOTE: Does this require a ref?]
 
-\section{Conclusion}
+For communication protocol, we decided to use HTTP and web sockets . This opens up for a huge list of possible controllers, basically any type of computer that understands HTTP. Using HTTP also enables remote management scenarios much easier, since HTTP traffic very unlikely to be blocked in firewalls. TODO MORE HERE ABOUT CLOUD
 
-\section{Acknowledgements}
+You cannot have a smart home without controllers, and to us the obvious choice for controllers are smart phones. It is a device which users carries around with them all the time and are comfortable using. It does limit the
+
+TODO in this section:
+- diagram of the architecture
+- mention cloud computing
+- intro to section
+- key design goals
+- overall infrastructure -- reasoning
+- something
+
+\subsection{Thingies}
+
+A Thingy can be either a sensor, a actuator, or a proxy for other Thingies.
+How simple can a thingy be and still be useful? That is a question raised in \cite{Edwards01athome} and it turns out, at least from our informal questioning of friends, family, and colleagues that even a simple Thingy that enables remote toggle of a light switch is useful.
+
+
+
+Keeping thingies simple.
+- no UI
+- only operational configuration on the device
+- no transactions
+
+Bootstrapping devices
+
+Security - wifi in the home determines that
+\subsection{Bootstrapping}
+
+mDNS, Apple Bonjour
+\subsection{Configuration}
+
+\subsection{Configuration synchronization}
+
+\subsection{Networking}
+
+\subsection{Security}
 
 \bibliographystyle{abbrv}
 \bibliography{bibliography}

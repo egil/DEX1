@@ -1,0 +1,30 @@
+// root object defines a single view template
+{
+  // String (required).
+  "title": "Title of view template",
+  // String (optional)
+  "description": "Description of view",
+  // Double (required). Defines the version the JSONIDL is defined in.
+  "version": 1.0,
+  // Array of widgets and/or groups (required)
+  "widgets": [ ... ]
+}
+
+{
+  // String (required). A globally, unique ID for each widget.
+  "id": "str",
+  // String (optional)
+  "title": "Some widget",
+  // String (optional)
+  "description": "",
+  // Integer (optional), default is NULL. Used to force a specific order of the widgets.
+  "priority": NULL,
+  // String (optional), default is read-only. Defines type of widget.
+  "type": "read-only|editable|select|multi-select|trigger|group",
+  // String (optional), default is string. Defines type of content.
+  "content-type": "string|integer|boolean",
+  //
+  "content": ""|1|[],
+  // Array of widgets and/or groups (optional)
+  "widgets": [ ... ]
+}
