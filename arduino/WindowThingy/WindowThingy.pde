@@ -4,10 +4,10 @@
 
 const char* UI = 
   "{"
-  "\"title\": \"Window\","
-  "\"version\": 1.0,"
-  "\"widgets\": ["
-  "{ \"id\": \"1\", \"title\": \"Window open\", \"type\": \"read-only\", \"content-type\": \"boolean\", \"widgets\": [] }"
+  "'title': 'Window',"
+  "'version': 1.0,"
+  "'widgets': ["
+  "{ 'id': '1', 'title': 'Window open', 'type': 'read-only', 'content-type': 'boolean', 'widgets': [] }"
   "]}";
   
 boolean windowIsOpen = true;
@@ -18,21 +18,32 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Go!");  
   
-  WiFly.begin();
-
-  if (!WiFly.join(ssid, passphrase)) {
-    while (1) {
-    }
-  }
+  joinNetwork();
+//  startAdHoc();
 
   Serial.println(WiFly.ip());
   
   server.begin();
 }
 
+void startAdHoc() {
+  Serial.println("Going adhoc");
+  WiFly.beginAdhoc();
+  Serial.println("Adhoc should be good");
+}
+
+void joinNetwork() {
+  WiFly.begin();
+  if (!WiFly.join(ssid, passphrase)) {
+    while (1) {
+    }
+  }
+}
+
 void loop() {
   Client client = server.available();
   if (client) {
+    Serial.println("got a client");
     boolean currentLineIsBlank = true;
     boolean isFirstLine = true;
     char firstLine[REQUEST_LENGTH];
@@ -71,12 +82,24 @@ void sendResponse(Client client, char* request) {
   if (strstr(request, " /ui ") != NULL) {
     client.println(UI);
   } else if (strstr(request, " /values ") != NULL) {
-    client.print("{ \"1\": ");
-    client.print(windowIsOpen ? "true" : "false");
-    client.println(" }");
-    windowIsOpen = !windowIsOpen;
+    sendValues(client);
+  } else if (strstr(request, " /config?") != NULL) {
+    handleConfigRequest(client, request);
   } else {
     client.println("Go to /ui or /values");
   }
+}
+
+void sendValues(Client client) {
+  client.print("{ '1': ");
+  client.print(windowIsOpen ? "true" : "false");
+  client.println(" }");
+  windowIsOpen = !windowIsOpen;
+}
+
+void handleConfigRequest(Client client, char* request) {
+  // /config?ssid=lol&pass=hejhejhej22
+  char* start = strstr(request, "?");
+  
 }
 

@@ -92,8 +92,8 @@ public class PresetActivity extends Activity implements Repository.Listener {
 
   public void onActivatePreset(View view) {
     for (PresetEntry entry : _preset.getEntries()) {
-      _thingyWriter.setStatus(entry.getThingy(), entry.getStatus());
-      _thingyWriter.flushWizard();
+//      _thingyWriter.setStatus(entry.getThingy(), entry.getStatus());
+//      _thingyWriter.flushWizard();
     }
   }
 

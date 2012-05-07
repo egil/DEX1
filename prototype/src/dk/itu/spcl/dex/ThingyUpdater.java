@@ -78,14 +78,14 @@ public class ThingyUpdater implements Runnable {
   }
 
   private void updateThingy(Thingy thingy) {
-    try {
-      boolean thingyStatus = getStatusFromUrl(Settings.WIZARD_URL + thingy.getUrl());
-      thingy.setStatus(thingyStatus);
-    } catch (ClientProtocolException e) {
-      Log.e("dex", e.toString());
-    } catch (IOException e) {
-      Log.e("dex", e.toString());
-    }
+//    try {
+//      boolean thingyStatus = getStatusFromUrl(Settings.WIZARD_URL + thingy.getUrl());
+//      thingy.setStatus(thingyStatus);
+//    } catch (ClientProtocolException e) {
+//      Log.e("dex", e.toString());
+//    } catch (IOException e) {
+//      Log.e("dex", e.toString());
+//    }
   }
 
   private boolean getStatusFromUrl(String url) throws ClientProtocolException,

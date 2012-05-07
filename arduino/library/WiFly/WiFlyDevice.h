@@ -9,6 +9,7 @@ class WiFlyDevice {
   public:
     WiFlyDevice(SpiUartDevice& theUart);
     void begin();
+    void beginAdhoc();
 
     boolean join(const char *ssid);
     boolean join(const char *ssid, const char *passphrase, 

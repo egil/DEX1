@@ -2,6 +2,6 @@ package dk.itu.spcl.dex;
 
 public class Settings {
 
-  public static final String WIZARD_URL = "http://anti.zno.dk/wizard/";
+  public static final String THINGY_URL = "http://192.168.43.193/";
   
 }

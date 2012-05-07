@@ -3,6 +3,6 @@
 
 // Wifi parameters
 char passphrase[] = "*snip*";
-char ssid[] = "lol$internets$on$tour";
+char ssid[] = "lol";
 
 #endif

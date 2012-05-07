@@ -34,14 +34,9 @@ public class ScanActivity extends Activity {
     performDummyScan();
   }
 
-  private void addMockThingy(String name) {
-    Thingy thingy = new Thingy().setName(name).setUrl(
-        "status_" + _thingiesReturned);
-    if (_thingiesReturned > 0)
-      thingy.setReadOnly(true);
-
+  private void addThingy(String name) {
+    Thingy thingy = new Thingy().setName(name).setUrl(Settings.THINGY_URL);
     _repository.addThingy(thingy);
-    _thingiesReturned++;
     returnScannedThingy(thingy);
   }
 
@@ -78,7 +73,7 @@ public class ScanActivity extends Activity {
 
     @Override
     protected String doInBackground(Integer... params) {
-      waitForMockScan();
+      waitForScan();
       return null;
     }
 
@@ -89,31 +84,15 @@ public class ScanActivity extends Activity {
             @Override
             public void closed(boolean accepted, String value) {
               if (accepted && value.length() > 0) {
-                addMockThingy(value);
+                addThingy(value);
               }
             }
           });
     }
 
-    private void waitForMockScan() {
+    private void waitForScan() {
       while (!isCancelled()) {
-        String scanned = null;
-        try {
-          scanned = HttpTools.readStringFromUrl(Settings.WIZARD_URL + "scan_"
-              + _thingiesReturned);
-        } catch (ClientProtocolException e1) {
-          e1.printStackTrace();
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }
-        if (scanned.equals("1"))
-          return;
-        else
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
+        return; // todo QR/whatever
       }
     }
   }

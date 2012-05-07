@@ -28,17 +28,7 @@ public class ThingyActivity extends Activity implements Repository.Listener {
 
     setTitle("Thingy: " + _thingy.getName());
 
-    setContentView(R.layout.simple_thingy);
-    _toggleButton = (ToggleButton) findViewById(R.id.thingyToggleButton);
     _repository.addListener(this);
-    _toggleButton.setChecked(_thingy.getStatus());
-  }
-
-  public void thingyToggleButtonClicked(View v) {
-    ToggleButton button = (ToggleButton) v;
-    boolean on = button.isChecked();
-    _thingyWriter.setStatus(_thingy, on);
-    _thingyWriter.flushWizard();
   }
   
   @Override 

@@ -1,12 +1,8 @@
 package dk.itu.spcl.dex.juidl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -90,7 +86,7 @@ public abstract class UIGenerator {
 		} 
 		String id = widget.optString("id");
 		if (idCol.contains(id)) {
-			throw new JUIDLException(String.format("The widget ID '{0}' is doublicated.", id));	
+			throw new JUIDLException(String.format("The widget ID '{0}' is duplicated.", id));	
 		}
 		// add id to collection for duplication checking purposes
 		idCol.add(id);
