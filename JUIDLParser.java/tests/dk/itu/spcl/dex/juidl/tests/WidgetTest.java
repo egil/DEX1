@@ -28,13 +28,12 @@ public class WidgetTest {
 		json.put("content", expectedContent);
 		String expParentId = "42";
 		
-		Widget<int[]> widget = Widget.genericFillFromJSONObject(json, expParentId);
+		Widget widget = Widget.fromJSONObject(json, expParentId);
 
 		assertEquals(expId, widget.getId());
 		assertEquals(expTitle, widget.getTitle());
 		assertEquals(expDesc, widget.getDescription());
 		assertEquals(expType, widget.getType());
-		assertEquals(expectedContent, widget.getContent());
 		assertEquals(expParentId, widget.getParentId());
 	}
 

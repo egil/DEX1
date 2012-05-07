@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import dk.itu.spcl.dex.juidl.JUIDLException;
 import dk.itu.spcl.dex.juidl.UIGenerator;
+import dk.itu.spcl.dex.juidl.WidgetType;
 
 public class UIGeneratorTest {
 
@@ -32,13 +33,28 @@ public class UIGeneratorTest {
 		assertEquals(1.0, p.canvasVersion, 0);
 	}
 	
-	// @Test
-	// public void sortingTest() {
-	// String test_schema = "{'title':'The Title', 'version':1.0, " +
-	// "'widgets':[{'id':'2'}," +
-	// "{'id':'3'}," +
-	// "]}";
-	// JSONObject schema_json = new JSONObject(test_schema);
-	// p.validate(schema_json);
-	// }
+	@Test
+	public void widgetGenTest() throws JSONException, JUIDLException {
+		String test_schema = "{'title':'The Title', " +
+							  "'version':1.0, 'widgets':[" +
+							  "{'id':'one', " +
+							  " 'title':'a title', " +
+							  " 'description':'a description', " +
+							  " 'priority':3, " +
+							  " 'type':'editable', " +
+							  " 'content-type':'integer', " +
+							  " 'content':42 }" +
+							  "]}";
+		JSONObject schema_json = new JSONObject(test_schema);
+		p.generate(schema_json);
+		
+		assertEquals("one", p.widget.getId());
+		assertEquals("a title", p.widget.getTitle());
+		assertEquals("a description", p.widget.getDescription());
+		assertEquals(WidgetType.EDITABLE, p.widget.getType());
+		assertEquals("integer", p.widget.getContentType());
+		assertEquals(42, p.intContent);
+	}
+	
+	
 }
