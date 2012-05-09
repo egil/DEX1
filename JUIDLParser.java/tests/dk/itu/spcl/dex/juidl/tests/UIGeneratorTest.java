@@ -1,7 +1,6 @@
 package dk.itu.spcl.dex.juidl.tests;
 
-import static org.junit.Assert.*;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.itu.spcl.dex.juidl.JUIDLException;
-import dk.itu.spcl.dex.juidl.UIGenerator;
 import dk.itu.spcl.dex.juidl.WidgetType;
 
 public class UIGeneratorTest {

@@ -1,12 +1,8 @@
 package dk.itu.spcl.dex.juidl.tests;
 
-import static org.junit.Assert.*;
-import junit.framework.Assert;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import dk.itu.spcl.dex.juidl.JUIDLException;

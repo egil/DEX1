@@ -1,11 +1,14 @@
 package dk.itu.spcl.dex.model;
 
+import java.util.HashMap;
+
+import dk.itu.spcl.dex.juidl.Widget;
+
 public class Thingy implements Comparable<Thingy> {
 
   private String _name;
   private String _url;
-  private boolean _status;
-  private boolean _isReadOnly;
+  private HashMap<String, Widget> _widgets = new HashMap<String, Widget>();
 
   public Thingy() {
   }
@@ -29,25 +32,13 @@ public class Thingy implements Comparable<Thingy> {
     _url = url;
     return this;
   }
-  
-  // status (to be expanded)
+    
+  public void addWidget(Widget widget) {
+    _widgets.put(widget.getId(), widget);
+  }
   
   public boolean getStatus() {
-    return _status;
-  }
-  
-  public Thingy setStatus(boolean status) {
-    _status = status;
-    return this;
-  }
-  
-  public boolean isReadOnly() {
-    return _isReadOnly;
-  }
-  
-  public Thingy setReadOnly(boolean readOnly) {
-    _isReadOnly = readOnly;
-    return this;
+    return false;
   }
   
   // standard overrides
