@@ -1,5 +1,4 @@
 #include "WiFly.h"
-#include "Credentials.h"
 #define REQUEST_LENGTH 40
 
 const char* UI = 
@@ -11,6 +10,7 @@ const char* UI =
   "]}";
   
 boolean windowIsOpen = true;
+char connectionInfo[100];
 
 Server server(80);
 
@@ -18,27 +18,77 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Go!");  
   
-  joinNetwork();
-//  startAdHoc();
-
-  Serial.println(WiFly.ip());
+  joinBootstrapNetwork();
+  readWifiInfo();
+  joinRealNetwork();
   
   server.begin();
 }
 
-void startAdHoc() {
-  Serial.println("Going adhoc");
-  WiFly.beginAdhoc();
-  Serial.println("Adhoc should be good");
+void joinBootstrapNetwork() {
+  WiFly.begin();
+  while (!WiFly.join("BootstrapAP", "1234567890", true)) {
+    Serial.println("Retrying");
+  }
+  Serial.println("Connected to bootstrap!");
 }
 
-void joinNetwork() {
-  WiFly.begin();
-  if (!WiFly.join(ssid, passphrase)) {
-    while (1) {
+void readWifiInfo() {
+  int index = 0;
+ 
+   // Relies on Android device having this IP in AP mode.
+   // Better solution: Use gateway IP.
+  Client client("192.168.43.1", 44444);
+
+  if (client.connect()) {
+    client.println("GET / HTTP/1.0");
+    client.println();
+
+    int newlines = 0;
+    boolean afterBlankLine = false;
+    
+    while (client.connected()) {
+      if (client.available()) {
+        char c = client.read();
+        Serial.print(c);
+        if (c == '\r') {
+          continue;
+        } else if (c == '\n') {
+          afterBlankLine = (++newlines == 2);
+        } else {
+          newlines = 0;
+          if (index < 99 && afterBlankLine) {
+            connectionInfo[index++] = c;
+          }
+        }
+      }
     }
+  } else {
+    Serial.println("Request failed");
+  }
+  connectionInfo[index] = '\0'; 
+}
+
+void joinRealNetwork() {
+  char* ssid = strtok(connectionInfo, "/");
+  char* key = strtok(NULL, "/");
+
+  // don't ask
+  char key2[strlen(key) + 1];
+  for (int i = 0; i < strlen(key); i++) 
+    key2[i] = key[i];
+  key2[strlen(key)] = '\0';
+
+  WiFly.begin();
+  if (WiFly.join(ssid, key2, true)) {
+    Serial.println("Connected to real wifi!");
+    Serial.println(WiFly.ip());
+  } else {
+    Serial.println("Wifi failed");
+    while(1);
   }
 }
+
 
 void loop() {
   Client client = server.available();
@@ -83,8 +133,6 @@ void sendResponse(Client client, char* request) {
     client.println(UI);
   } else if (strstr(request, " /values ") != NULL) {
     sendValues(client);
-  } else if (strstr(request, " /config?") != NULL) {
-    handleConfigRequest(client, request);
   } else {
     client.println("Go to /ui or /values");
   }
@@ -95,11 +143,5 @@ void sendValues(Client client) {
   client.print(windowIsOpen ? "true" : "false");
   client.println(" }");
   windowIsOpen = !windowIsOpen;
-}
-
-void handleConfigRequest(Client client, char* request) {
-  // /config?ssid=lol&pass=hejhejhej22
-  char* start = strstr(request, "?");
-  
 }
 

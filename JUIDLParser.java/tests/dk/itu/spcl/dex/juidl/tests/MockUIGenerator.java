@@ -1,12 +1,5 @@
 package dk.itu.spcl.dex.juidl.tests;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import junit.framework.Assert;
-
-import org.json.JSONObject;
-
 import dk.itu.spcl.dex.juidl.UIGenerator;
 import dk.itu.spcl.dex.juidl.Widget;
 

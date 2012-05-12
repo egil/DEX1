@@ -1,17 +1,15 @@
 package dk.itu.spcl.dex;
 
-import java.io.IOException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
-import dk.itu.spcl.dex.tools.HttpTools;
 import dk.itu.spcl.dex.tools.UITools;
 
 public class ScanActivity extends Activity {
@@ -26,16 +24,31 @@ public class ScanActivity extends Activity {
     _repository = Repository.getInstance();
 
     setTitle("Install new thingy");
-    TextView textview = new TextView(this);
-    textview.setText("Hold your phone close to the device you want to add.");
-    textview.setTextSize(18);
-    setContentView(textview);
 
-    performDummyScan();
+    IntentIntegrator integrator = new IntentIntegrator(this);
+    integrator.initiateScan();
   }
 
-  private void addThingy(String name) {
-    Thingy thingy = new Thingy().setName(name).setUrl(Settings.THINGY_URL);
+  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode,
+        resultCode, intent);
+    if (scanResult != null) {
+      String scannedText = scanResult.getContents();
+      if (scannedText.startsWith("thingy://")) {
+        String[] wifiInfo = scannedText.substring("thingy://".length()).split(
+            "\\/");
+        startBootstrap(wifiInfo[0], wifiInfo[1]);
+      }
+    }
+  }
+
+  private void startBootstrap(String ssid, String key) {
+    _scanTask = new ScanTask();
+    _scanTask.execute(ssid, key);
+  }
+
+  private void addThingy(String name, String url) {
+    Thingy thingy = new Thingy().setName(name).setUrl(url);
     _repository.addThingy(thingy);
     returnScannedThingy(thingy);
   }
@@ -59,42 +72,27 @@ public class ScanActivity extends Activity {
     super.onDestroy();
   }
 
-  public static int _thingiesReturned = 0;
-
-  private void performDummyScan() {
-    if (_thingiesReturned >= 3)
-      return;
-
-    _scanTask = new ScanTask();
-    _scanTask.execute(0);
-  }
-
-  private class ScanTask extends AsyncTask<Integer, Integer, String> {
+  private class ScanTask extends AsyncTask<String, Integer, String> {
 
     @Override
-    protected String doInBackground(Integer... params) {
-      waitForScan();
-      return null;
+    protected String doInBackground(String... params) {
+      Bootstrapper bootstrapper = new Bootstrapper(ScanActivity.this,
+          params[0], params[1]);
+      bootstrapper.runBootstrapping();
+      return "http://10.0.0.101/"; // todo
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(final String result) {
       UITools.promptForString(ScanActivity.this, "Add thingy", "Name:",
           new UITools.PromptResultHandler<String>() {
             @Override
             public void closed(boolean accepted, String value) {
               if (accepted && value.length() > 0) {
-                addThingy(value);
+                addThingy(value, result);
               }
             }
           });
     }
-
-    private void waitForScan() {
-      while (!isCancelled()) {
-        return; // todo QR/whatever
-      }
-    }
   }
-
 }

@@ -22,10 +22,11 @@ public final class R {
         public static final int on_nocheck=0x7f020008;
     }
     public static final class id {
-        public static final int addThingyMenu=0x7f060005;
+        public static final int addThingyMenu=0x7f060006;
+        public static final int bootstrapMenu=0x7f060004;
         public static final int listTextView=0x7f060000;
-        public static final int newPresetMenu=0x7f060004;
-        public static final int newThingyMenu=0x7f060006;
+        public static final int newPresetMenu=0x7f060005;
+        public static final int newThingyMenu=0x7f060007;
         public static final int presetThingyList=0x7f060001;
         public static final int resetMenu=0x7f060003;
         public static final int thingyToggleButton=0x7f060002;

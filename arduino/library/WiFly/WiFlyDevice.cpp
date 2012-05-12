@@ -393,7 +393,8 @@ void WiFlyDevice::setConfiguration() {
 boolean WiFlyDevice::join(const char *ssid) {
     // Ron Guest -- begin change to support space in SSID
       // First we set the SSID (putting the SSID on the join command doesn't work
-      Serial.println("Setting SSID using Ron method");
+      Serial.print("Connecting to ");
+      Serial.println(ssid);
       sendCommand("set wlan ssid ",true);
       sendCommand(ssid);
       if (sendCommand("join", false, "Associated!")) {
@@ -529,46 +530,6 @@ boolean WiFlyDevice::configure(byte option, unsigned long value) {
   }
   return true;
 }
-
-void WiFlyDevice::beginAdhoc() {
-  /*
-    Create and AdHoc network with the WiFly Shield.
-   */
-
-  DEBUG_LOG(1, "Entered WiFlyDevice::beginAdhoc()");
-
-  uart.begin();
-  reboot(); // Reboot to get device into known state
-  requireFlowControl();
-  enterCommandMode();
-
-  // Turn on Adhoc Mode
-  sendCommand("set wlan join 4");
-  // Set SSID of Adhoc Network
-  sendCommand("set wlan ssid WindowThingySSID");
-  // Set Channel for Adhoc Network
-  sendCommand("set wlan chan 1");
-  // Set IP for Adhoc Network
-  sendCommand("set ip address 169.254.1.1");
-  sendCommand("set ip netmask 255.255.0.0");
-  // Turn off DHCP
-  sendCommand("set ip dhcp 0");
-  // Set server port
-  sendCommand("set ip localport ", true);
-  uart.print(serverPort);
-  sendCommand("");
-
-  // Turn off remote connect message
-  sendCommand("set comm remote 0");
-
-  sendCommand("save", false, "Storing in config");
-  //Ensures sucessful reboot. See requireFlowControl for more info.
-  sendCommand("get uart", false, "Flow=0x1");
-  reboot();
-
-  //After rebooting, your AdHoc network will be available.
-}
-
 
 // Preinstantiate required objects
 SpiUartDevice SpiSerial;

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
 
-
 import android.util.Log;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
@@ -70,7 +69,6 @@ public class ThingyUpdater implements Runnable {
   }
 
   private void update() {
-    Log.i("dex", "Updating");
     for (Thingy thingy : _repository.getThingies())
       updateThingy(thingy);
 

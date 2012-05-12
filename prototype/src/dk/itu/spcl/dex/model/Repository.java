@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import dk.itu.spcl.dex.ScanActivity;
-
 public class Repository {
 
   public interface Listener {
@@ -113,7 +111,6 @@ public class Repository {
   public void reset() {
     _thingies.clear();
     _presets.clear();
-    ScanActivity._thingiesReturned = 0; // ew
     onStructureChanged();
   }
 
