@@ -12,7 +12,7 @@ const char* UI =
   "]}";
   
 boolean windowIsOpen = true;
-char ssid[60];
+char ssid[33];
 char key[60];
 const char* ip;
 
@@ -21,7 +21,7 @@ Server server(80);
 void setup() {
   Serial.begin(9600);
   Serial.println("Waiting a bit");
-  delay(4000);  
+  delay(2000);  
   Serial.println("Go!");
   
   joinBootstrapNetwork();
@@ -90,7 +90,7 @@ void readWifiInfo() {
           if (afterBlankLine) {
             if (afterSlash && keyIndex < 59)
               key[keyIndex++] = c;
-            else if (ssidIndex < 59)
+            else if (ssidIndex < 32)
               ssid[ssidIndex++] = c;
           }
         }
@@ -108,16 +108,6 @@ void readWifiInfo() {
 }
 
 void joinRealNetwork() {
-/*  
-  char* ssid = strtok(connectionInfo, "/");
-  char* key = strtok(NULL, "/");
-
-  // don't ask
-  char key2[strlen(key) + 1];
-  for (int i = 0; i < strlen(key); i++) 
-    key2[i] = key[i];
-  key2[strlen(key)] = '\0';*/
-
   WiFly.begin();
   if (WiFly.join(ssid, key, true)) {
     ip = WiFly.ip();

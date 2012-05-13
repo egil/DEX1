@@ -2,6 +2,8 @@ package dk.itu.spcl.dex;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ToggleButton;
 import dk.itu.spcl.dex.model.Repository;
 import dk.itu.spcl.dex.model.Thingy;
 
@@ -11,6 +13,7 @@ public class ThingyActivity extends Activity implements Repository.Listener {
   private ThingyUpdater _thingyUpdater;
   private Repository _repository;
   private ThingyStatusWriter _thingyWriter;
+  private ToggleButton _toggleButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,16 @@ public class ThingyActivity extends Activity implements Repository.Listener {
 
     setTitle("Thingy: " + _thingy.getName());
 
+    setContentView(R.layout.simple_thingy);
+    _toggleButton = (ToggleButton) findViewById(R.id.thingyToggleButton);
     _repository.addListener(this);
+    _toggleButton.setChecked(_thingy.getStatus());
+  }
+
+  public void thingyToggleButtonClicked(View v) {
+    ToggleButton button = (ToggleButton) v;
+    boolean on = button.isChecked();
+    //_thingyWriter.setStatus(_thingy, on);
   }
   
   @Override 
@@ -56,7 +68,7 @@ public class ThingyActivity extends Activity implements Repository.Listener {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-  
+        _toggleButton.setChecked(_thingy.getStatus());  
       }
     });
   }

@@ -8,7 +8,7 @@ public class Thingy implements Comparable<Thingy> {
 
   private String _name;
   private String _url;
-  private HashMap<String, Widget> _widgets = new HashMap<String, Widget>();
+  private boolean _status;
 
   public Thingy() {
   }
@@ -32,13 +32,14 @@ public class Thingy implements Comparable<Thingy> {
     _url = url;
     return this;
   }
-    
-  public void addWidget(Widget widget) {
-    _widgets.put(widget.getId(), widget);
-  }
   
   public boolean getStatus() {
-    return false;
+    return _status;
+  }
+  
+  public Thingy setStatus(boolean status) {
+    _status = status;
+    return this;
   }
   
   // standard overrides

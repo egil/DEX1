@@ -13,7 +13,7 @@ import dk.itu.spcl.dex.tools.HttpTools;
 public class ThingyUpdater implements Runnable {
 
   private Thread _runningThread;
-  private final static int UPDATE_INTERVAL = 500;
+  private final static int UPDATE_INTERVAL = 2000;
   private Repository _repository;
   private ArrayList<Object> _listeners = new ArrayList<Object>();
   private static ThingyUpdater _instance;
@@ -76,20 +76,20 @@ public class ThingyUpdater implements Runnable {
   }
 
   private void updateThingy(Thingy thingy) {
-//    try {
-//      boolean thingyStatus = getStatusFromUrl(Settings.WIZARD_URL + thingy.getUrl());
-//      thingy.setStatus(thingyStatus);
-//    } catch (ClientProtocolException e) {
-//      Log.e("dex", e.toString());
-//    } catch (IOException e) {
-//      Log.e("dex", e.toString());
-//    }
+    try {
+      boolean thingyStatus = getStatusFromUrl(thingy.getUrl() + "values");
+      thingy.setStatus(thingyStatus);
+    } catch (ClientProtocolException e) {
+      Log.e("dex", e.toString());
+    } catch (IOException e) {
+      Log.e("dex", e.toString());
+    }
   }
 
   private boolean getStatusFromUrl(String url) throws ClientProtocolException,
       IOException {
     String responseText = HttpTools.readStringFromUrl(url);
-    return responseText.equals("1");
+    return responseText.contains("true");
   }
 
   private void pause() {
