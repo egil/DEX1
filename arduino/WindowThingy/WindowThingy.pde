@@ -20,7 +20,9 @@ Server server(80);
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Go!");  
+  Serial.println("Waiting a bit");
+  delay(4000);  
+  Serial.println("Go!");
   
   joinBootstrapNetwork();
   readWifiInfo();

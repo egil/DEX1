@@ -48,15 +48,9 @@ public class HomeActivity extends TabActivity {
     case R.id.resetMenu:
       _repository.reset();
       return true;
-    case R.id.bootstrapMenu:
-      testBootstrap();
     default:
       return super.onOptionsItemSelected(item);
     }
-  }
-
-  private void testBootstrap() {
-    new Bootstrapper(this, "ThingyBootstrapAP", "1234567890").runBootstrapping();
   }
 
   private void addTabs() {

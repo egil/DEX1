@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -16,7 +17,8 @@ import dk.itu.spcl.dex.tools.UITools;
 public class ScanActivity extends Activity {
 
   private Repository _repository;
-  private ScanTask _scanTask;
+  private BootstrapTask _bootstrapTask;
+  private TextView _textView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,10 @@ public class ScanActivity extends Activity {
     _repository = Repository.getInstance();
 
     setTitle("Install new thingy");
+
+    _textView = new TextView(this);
+    _textView.setTextSize(18);
+    setContentView(_textView);
 
     IntentIntegrator integrator = new IntentIntegrator(this);
     integrator.initiateScan();
@@ -36,6 +42,7 @@ public class ScanActivity extends Activity {
     if (scanResult != null) {
       String scannedText = scanResult.getContents();
       if (scannedText.startsWith("thingy://")) {
+        showText("Great! Now press the button on the thingy. Connecting will take a little while.");
         String[] wifiInfo = scannedText.substring("thingy://".length()).split(
             "\\/");
         startBootstrap(wifiInfo[0], wifiInfo[1]);
@@ -44,8 +51,8 @@ public class ScanActivity extends Activity {
   }
 
   private void startBootstrap(String ssid, String key) {
-    _scanTask = new ScanTask();
-    _scanTask.execute(ssid, key);
+    _bootstrapTask = new BootstrapTask();
+    _bootstrapTask.execute(ssid, key);
   }
 
   private void addThingy(String name, String url) {
@@ -68,13 +75,21 @@ public class ScanActivity extends Activity {
 
   @Override
   protected void onDestroy() {
-    if (_scanTask != null)
-      _scanTask.cancel(true);
+    if (_bootstrapTask != null)
+      _bootstrapTask.cancel(true);
 
     super.onDestroy();
   }
 
-  private class ScanTask extends AsyncTask<String, Integer, String> {
+  private void showText(final String text) {
+    runOnUiThread(new Runnable() {
+      public void run() {
+        _textView.setText(text);
+      }
+    });
+  }
+
+  private class BootstrapTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected String doInBackground(String... params) {
@@ -85,11 +100,13 @@ public class ScanActivity extends Activity {
 
     @Override
     protected void onPostExecute(final String result) {
+      showText("Excellent");
       UITools.promptForString(ScanActivity.this, "Add thingy", "Name:",
           new UITools.PromptResultHandler<String>() {
             @Override
             public void closed(boolean accepted, String value) {
               if (accepted && value.length() > 0) {
+                showText("");
                 addThingy(value, result);
               }
             }
