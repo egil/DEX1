@@ -1,5 +1,7 @@
 #include "WiFly.h"
 #define REQUEST_LENGTH 40
+#define BOOTSTRAP_GATEWAY "192.168.43.1"
+#define BOOTSTRAP_PORT 44444
 
 const char* UI = 
   "{"
@@ -10,7 +12,9 @@ const char* UI =
   "]}";
   
 boolean windowIsOpen = true;
-char connectionInfo[100];
+char ssid[60];
+char key[60];
+const char* ip;
 
 Server server(80);
 
@@ -20,6 +24,9 @@ void setup() {
   
   joinBootstrapNetwork();
   readWifiInfo();
+  joinRealNetwork();
+  joinBootstrapNetwork();
+  saveIp();
   joinRealNetwork();
   
   server.begin();
@@ -33,32 +40,56 @@ void joinBootstrapNetwork() {
   Serial.println("Connected to bootstrap!");
 }
 
+void saveIp() {
+  Client client(BOOTSTRAP_GATEWAY, BOOTSTRAP_PORT);
+  Serial.println("Saving IP");
+  
+  if (client.connect()) {
+    client.print("GET /saveip/");
+    client.print(ip);
+    client.println(" HTTP/1.0");
+    client.println();
+    delay(100);
+    client.stop();
+  }
+  
+  Serial.println("Saved");
+}
+
 void readWifiInfo() {
-  int index = 0;
+    int ssidIndex = 0;
+    int keyIndex = 0;
  
    // Relies on Android device having this IP in AP mode.
    // Better solution: Use gateway IP.
-  Client client("192.168.43.1", 44444);
+  Client client(BOOTSTRAP_GATEWAY, BOOTSTRAP_PORT);
 
   if (client.connect()) {
-    client.println("GET / HTTP/1.0");
+    client.println("GET /getssid HTTP/1.0");
     client.println();
 
     int newlines = 0;
     boolean afterBlankLine = false;
+    boolean afterSlash = false;
     
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
-        Serial.print(c);
         if (c == '\r') {
           continue;
         } else if (c == '\n') {
           afterBlankLine = (++newlines == 2);
+          afterSlash = false;
+        } else if (c == '/') {
+          afterSlash = true;
+          newlines = 0;
         } else {
           newlines = 0;
-          if (index < 99 && afterBlankLine) {
-            connectionInfo[index++] = c;
+          if (afterBlankLine) {
+            if (afterSlash && keyIndex < 59)
+              key[keyIndex++] = c;
+            else if (ssidIndex < 59)
+              ssid[ssidIndex++] = c;
           }
         }
       }
@@ -66,10 +97,16 @@ void readWifiInfo() {
   } else {
     Serial.println("Request failed");
   }
-  connectionInfo[index] = '\0'; 
+  ssid[ssidIndex] = '\0'; 
+  key[keyIndex] = '\0';
+  
+  Serial.println(ssid);
+  Serial.println(key);
+  client.stop();
 }
 
 void joinRealNetwork() {
+/*  
   char* ssid = strtok(connectionInfo, "/");
   char* key = strtok(NULL, "/");
 
@@ -77,12 +114,13 @@ void joinRealNetwork() {
   char key2[strlen(key) + 1];
   for (int i = 0; i < strlen(key); i++) 
     key2[i] = key[i];
-  key2[strlen(key)] = '\0';
+  key2[strlen(key)] = '\0';*/
 
   WiFly.begin();
-  if (WiFly.join(ssid, key2, true)) {
+  if (WiFly.join(ssid, key, true)) {
+    ip = WiFly.ip();
     Serial.println("Connected to real wifi!");
-    Serial.println(WiFly.ip());
+    Serial.println(ip);
   } else {
     Serial.println("Wifi failed");
     while(1);

@@ -1,7 +1,9 @@
 package dk.itu.spcl.dex;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,17 +28,19 @@ public class Bootstrapper {
     _key = key;
   }
 
-  public void runBootstrapping() {
+  public String runBootstrapping() {
     try {
       toggleWifi(false);
       toggleHotspot(true);
-      waitForConnection();
+      String thingyUrl = listenForBootstrapRequests();
       pause(); // give the thingy a chance to disconnect
       toggleHotspot(false);
       toggleWifi(true);
+      return thingyUrl;
     } catch (Exception e) {
       Log.e("dex", e.toString());
     }
+    return null;
   }
 
   private void pause() {
@@ -46,19 +50,32 @@ public class Bootstrapper {
     }
   }
 
-  private void waitForConnection() throws IOException {
+  private String listenForBootstrapRequests() throws IOException {
     Log.i("dex", "Listening");
     ServerSocket server = new ServerSocket(44444);
-    Socket connection = server.accept();
-    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-        connection.getOutputStream(), Charset.forName("US-ASCII")));
-    String response = "HTTP/1.1 200 OK\n" + "Content-Type: text/html\n" + "\n"
-        + Settings.HOME_SSID + "/" + Settings.HOME_PSK + "\n";
-    writer.write(response);
-    writer.flush();
-    writer.close();
+    String thingyUrl = null;
+    while (thingyUrl == null) {
+      Socket connection = server.accept();
+      // request format:
+      // /getssid
+      // /saveip/x.x.x.x
+      BufferedReader reader = new BufferedReader(new InputStreamReader(
+          connection.getInputStream()));
+      String request = reader.readLine();
+      if (request.contains("/saveip/")) {
+        thingyUrl = "http://"
+            + request.split("\\ ")[1].substring("/saveip/".length()) + "/";
+      }
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+          connection.getOutputStream(), Charset.forName("US-ASCII")));
+      String response = "HTTP/1.1 200 OK\n" + "Content-Type: text/html\n"
+          + "\n" + Settings.HOME_SSID + "/" + Settings.HOME_PSK + "\n";
+      writer.write(response);
+      writer.flush();
+      writer.close();
+    }
     server.close();
-    Log.i("dex", "Sent response");
+    return thingyUrl;
   }
 
   private void toggleHotspot(boolean enable) throws IllegalArgumentException,

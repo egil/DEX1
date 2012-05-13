@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -49,6 +50,7 @@ public class ScanActivity extends Activity {
 
   private void addThingy(String name, String url) {
     Thingy thingy = new Thingy().setName(name).setUrl(url);
+    Log.i("dex", "Adding thingy with url " + url);
     _repository.addThingy(thingy);
     returnScannedThingy(thingy);
   }
@@ -78,8 +80,7 @@ public class ScanActivity extends Activity {
     protected String doInBackground(String... params) {
       Bootstrapper bootstrapper = new Bootstrapper(ScanActivity.this,
           params[0], params[1]);
-      bootstrapper.runBootstrapping();
-      return "http://10.0.0.101/"; // todo
+      return bootstrapper.runBootstrapping();
     }
 
     @Override
