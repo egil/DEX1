@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:defaultValue="HomeAP"
+        android:key="ssid"
+        android:order="1"
+        android:summary="Name of your home access point"
+        android:title="SSID" />
+    <EditTextPreference
+        android:defaultValue="abcdefgh"
+        android:key="key"
+        android:order="2"
+        android:summary="Passphrase for your home wifi"
+        android:title="Passphrase" />
+
+</PreferenceScreen>

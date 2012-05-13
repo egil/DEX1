@@ -1,14 +1,15 @@
 package dk.itu.spcl.dex;
 
-import dk.itu.spcl.dex.model.Repository;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
+import dk.itu.spcl.dex.model.Repository;
 
 public class HomeActivity extends TabActivity {
 
@@ -21,6 +22,7 @@ public class HomeActivity extends TabActivity {
     _repository = Repository.getInstance();
     setContentView(R.layout.home);
     addTabs();
+    PreferenceManager.setDefaultValues(this, R.xml.settings, false); 
   }
 
   @Override
@@ -48,9 +50,16 @@ public class HomeActivity extends TabActivity {
     case R.id.resetMenu:
       _repository.reset();
       return true;
+    case R.id.settingsMenu:
+      showSettings();
+      return true;
     default:
       return super.onOptionsItemSelected(item);
     }
+  }
+
+  private void showSettings() {
+    startActivity(new Intent(this, SettingsActivity.class));
   }
 
   private void addTabs() {

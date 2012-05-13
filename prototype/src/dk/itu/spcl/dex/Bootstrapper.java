@@ -21,8 +21,10 @@ public class Bootstrapper {
   private WifiManager _wifiManager;
   private String _ssid;
   private String _key;
+  private Context _context;
 
   public Bootstrapper(Context context, String ssid, String key) {
+    _context = context;
     _wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     _ssid = ssid;
     _key = key;
@@ -69,7 +71,7 @@ public class Bootstrapper {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
           connection.getOutputStream(), Charset.forName("US-ASCII")));
       String response = "HTTP/1.1 200 OK\n" + "Content-Type: text/html\n"
-          + "\n" + Settings.HOME_SSID + "/" + Settings.HOME_PSK + "\n";
+          + "\n" + Settings.getHomeSsid(_context) + "/" + Settings.getHomePsk(_context) + "\n";
       writer.write(response);
       writer.flush();
       writer.close();
