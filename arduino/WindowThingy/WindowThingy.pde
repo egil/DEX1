@@ -1,5 +1,8 @@
 #include "WiFly.h"
 #define REQUEST_LENGTH 40
+
+// Relies on Android device having this IP in AP mode.
+// Better solution: Use gateway IP.
 #define BOOTSTRAP_GATEWAY "192.168.43.1"
 #define BOOTSTRAP_PORT 44444
 
@@ -59,11 +62,9 @@ void saveIp() {
 }
 
 void readWifiInfo() {
-    int ssidIndex = 0;
-    int keyIndex = 0;
+  int ssidIndex = 0;
+  int keyIndex = 0;
  
-   // Relies on Android device having this IP in AP mode.
-   // Better solution: Use gateway IP.
   Client client(BOOTSTRAP_GATEWAY, BOOTSTRAP_PORT);
 
   if (client.connect()) {
@@ -88,6 +89,9 @@ void readWifiInfo() {
         } else {
           newlines = 0;
           if (afterBlankLine) {
+            if (c == ' ') {
+              c = '$';
+            }
             if (afterSlash && keyIndex < 59)
               key[keyIndex++] = c;
             else if (ssidIndex < 32)
