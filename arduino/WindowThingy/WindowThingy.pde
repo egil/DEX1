@@ -17,6 +17,7 @@ const char* UI =
 boolean windowIsOpen = true;
 char ssid[33];
 char key[60];
+char firstLine[REQUEST_LENGTH];
 const char* ip;
 
 Server server(80);
@@ -130,7 +131,6 @@ void loop() {
     Serial.println("got a client");
     boolean currentLineIsBlank = true;
     boolean isFirstLine = true;
-    char firstLine[REQUEST_LENGTH];
     int index = 0;
     while (client.connected()) {
       if (client.available()) {
