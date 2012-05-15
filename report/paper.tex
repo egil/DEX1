@@ -81,7 +81,7 @@ The key design decision for \textit{thingies for Dummies} is that it should be s
 
 \begin{figure}[th]
 \begin{center}
-\includegraphics[width=0.90\columnwidth]{figures/systemoverviewdrawing.png}
+\includegraphics[width=0.90\columnwidth]{figures/systemoverviewdrawing.pdf}
 \end{center}
 \caption{Overview of the infrastructure}
 \label{fig:infrastructureOverview}
@@ -237,7 +237,7 @@ We have implemented a subset of our designed infrastructure. The implementation 
 
 We have not implemented secure thingies with user authentication, or synchronization of configuration across users; nor is the Android-side of the UI generation implemented beyond what is needed for the sample thingy. The sample thingy requires no configuration, so this has been left out. Also, remote access from outside the Wi-Fi network is not implemented, and we opted to use HTTP polling rather than web sockets for communication with the thingy. Finally, the bootstrapping process was implemented differently; more on that later.
 
-Our implementation is described in the following.
+Our implementation is described in the following. The source code is available online\footnote{\url{https://github.com/egil/dex1}}.
 
 \subsection{Controller: Home Remote for Android}
 
@@ -272,7 +272,7 @@ Recall that the purpose of our bootstrap process is to get a new thingy connecte
 
 \begin{figure}[th]
 \begin{center}
-\includegraphics[width=0.70\columnwidth]{figures/bootstrap-drawing.png}
+\includegraphics[width=0.70\columnwidth]{figures/bootstrap-drawing.pdf}
 \end{center}
 \caption{Devices and access points involved in the bootstrap process}
 \label{fig:bootstrapDraw}
