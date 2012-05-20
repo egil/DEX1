@@ -17,7 +17,6 @@ const char* UI =
 boolean windowIsOpen = true;
 char ssid[33];
 char key[60];
-char firstLine[REQUEST_LENGTH];
 const char* ip;
 
 Server server(80);
@@ -126,9 +125,11 @@ void joinRealNetwork() {
 
 
 void loop() {
+  delay(100);
   Client client = server.available();
   if (client) {
     Serial.println("got a client");
+    char firstLine[REQUEST_LENGTH];
     boolean currentLineIsBlank = true;
     boolean isFirstLine = true;
     int index = 0;
