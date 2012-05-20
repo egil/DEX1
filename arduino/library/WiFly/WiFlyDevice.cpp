@@ -23,10 +23,10 @@ boolean WiFlyDevice::findInResponse(const char *toMatch,
   unsigned int timeOutTarget; // in milliseconds
 
 
-  DEBUG_LOG(1, "Entered findInResponse");
-  DEBUG_LOG(2, "Want to match:");
-  DEBUG_LOG(2, toMatch);
-  DEBUG_LOG(3, "Found:");
+/*  Serial.println("Entered findInResponse");
+  Serial.print("Want to match: ");
+  Serial.println(toMatch);
+  Serial.println("Found: ");*/
 
   for (unsigned int offset = 0; offset < strlen(toMatch); offset++) {
 
@@ -51,7 +51,7 @@ boolean WiFlyDevice::findInResponse(const char *toMatch,
 
     DEBUG_LOG(5, "Offset:");
     DEBUG_LOG(5, offset);
-    DEBUG_LOG(3, (char) byteRead);
+//    Serial.print((char) byteRead);
     DEBUG_LOG(4, byteRead);
 
     if (byteRead != toMatch[offset]) {
@@ -207,7 +207,9 @@ void WiFlyDevice::begin() {
 
   DEBUG_LOG(1, "Entered WiFlyDevice::begin()");
 
-  uart.begin();
+  while (!uart.begin()) {
+    Serial.println("uart init failed, retrying");
+  }
   reboot(); // Reboot to get device into known state
   requireFlowControl();
   setConfiguration();
@@ -257,10 +259,11 @@ boolean WiFlyDevice::hardwareReboot() {
   delay(1);
   uart.ioSetState(0b00000010);
 
-  return findInResponse("*READY*", 2000);
+  //return findInResponse("*READY*", 2000);
+  waitForResponse("*READY*");
 }
 
-
+#define USE_HARDWARE_RESET true
 #if USE_HARDWARE_RESET
 #define REBOOT hardwareReboot
 #else
@@ -273,9 +276,9 @@ void WiFlyDevice::reboot() {
 
   DEBUG_LOG(1, "Entered reboot");
 
-  if (!REBOOT()) {
-    DEBUG_LOG(1, "Failed to reboot. Halting.");
-    while (1) {}; // Hang. TODO: Handle differently?
+  while (!REBOOT()) {
+    Serial.println("Failed reboot, retrying");
+    delay(1000);
   }
 }
 
@@ -397,11 +400,20 @@ boolean WiFlyDevice::join(const char *ssid) {
       Serial.println(ssid);
       sendCommand("set wlan ssid ",true);
       sendCommand(ssid);
-      if (sendCommand("join", false, "Associated!")) {
+      if (sendCommand("join", false, "")) {// "Associated!")) {
+        delay(2000);
+        skipRemainderOfResponse();
+        
+        const char* newIp = ip();
+        if (strcmp(newIp, "0.0.0.0") == 0 || strcmp(newIp, "169.254.1.1") == 0) {
+          Serial.println("Connection failed");
+          return false;
+        }
+        
         // TODO: Extract information from complete response?
         // TODO: Change this to still work when server mode not active
-        waitForResponse("Listen on ");
-        skipRemainderOfResponse();
+        //waitForResponse("Listen on ");
+        
         return true;
       }
     // Ron Guest -- end change. Uncomment the below block and delete this one to restore original code
@@ -530,6 +542,114 @@ boolean WiFlyDevice::configure(byte option, unsigned long value) {
   }
   return true;
 }
+
+/*****************************************************************************
+  Code by David & Egil below this point. Fighting spaghetti with spaghetti!
+  
+*****************************************************************************/
+
+void WiFlyDevice::write(const char* string) {
+  uart.println(string);
+  read();
+}
+
+void WiFlyDevice::read() {
+  int timeout = 600;
+  unsigned long startTime = millis();
+  const char* ok = "AOK\r\n<2.23> \n";
+  int index = 0;
+
+  while (millis() < startTime + timeout) {
+    while (!uart.available()) {
+      if (!(millis() < startTime + timeout))
+        return;
+    }
+    
+    char c = (char)uart.read();
+    Serial.print(c);
+    
+    if (c == ok[index]) {
+      index++;
+      if (index == strlen(ok)) {
+        return;
+      }
+    } else {
+      index = 0;
+    }
+    
+    startTime = millis();
+  }
+}
+
+void WiFlyDevice::newBegin() {
+  while (!uart.begin()) {
+    Serial.println("uart init failed, retrying");
+  }
+  
+  reboot(); // Reboot to get device into known state
+  requireFlowControl();
+}
+
+const char* WiFlyDevice::newConnect(const char* ssid, const char* pass) {
+  write("$$$");
+  
+  write("set wlan join 0");
+  write("set ip dhcp 1");
+  write("set ip localport 80");
+  write("set comm remote 0");
+
+  uart.write("set wlan ssid ");
+  write(ssid);
+  uart.write("set wlan passphrase ");
+  write(pass);
+  uart.println("join");
+  const char* ip = waitForIP();
+  write("exit");
+  return ip;
+}
+
+const char* WiFlyDevice::waitForIP() {
+  int timeout = 6000;
+  unsigned long startTime = millis();
+  char expected[] = "IP=";
+  static char ip[16] = "";
+  int index = 0;
+  int ipIndex = 0;
+  
+  while (true) {
+    while (!uart.available()) {
+      if (!(millis() < startTime + timeout))
+        return NULL;
+    }
+    
+    char c = uart.read();
+    Serial.print(c);
+    if (c == expected[index]) {
+      index++;
+      if (index == strlen(expected)) {
+        while (c != ':') {
+          while (!uart.available());
+          c = uart.read();
+          ip[ipIndex++] = c;
+        }
+        ip[--ipIndex] = '\0';
+        return ip;
+      }
+    } else {
+      index = 0;
+    }
+  }
+}
+
+void WiFlyDevice::runServer() {
+  // wait for *OPEN*
+  // read with timeout
+  // extract request
+  // do stuff & send response
+}
+
+
+
 
 // Preinstantiate required objects
 SpiUartDevice SpiSerial;

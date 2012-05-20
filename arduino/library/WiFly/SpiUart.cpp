@@ -50,16 +50,16 @@ struct SPI_UART_cfg SPI_Uart_config = {
 };
 
 
-void SpiUartDevice::begin(unsigned long baudrate /* default value */) {
+bool SpiUartDevice::begin(unsigned long baudrate /* default value */) {
   /*
         
    */
   SpiDevice::begin();
-  initUart(baudrate);
+  return initUart(baudrate);
 }
 
 
-void SpiUartDevice::initUart(unsigned long baudrate) {
+bool SpiUartDevice::initUart(unsigned long baudrate) {
   /*
     
     Initialise the UART.
@@ -70,12 +70,7 @@ void SpiUartDevice::initUart(unsigned long baudrate) {
   // Initialise and test SC16IS750
   configureUart(baudrate);
   
-  if(!uartConnected()){ 
-    while(1) {
-      // Lock up if we fail to initialise SPI UART bridge.
-    }; 
-  }
-  
+  return uartConnected();
   // The SPI UART bridge is now successfully initialised.
 }
 
@@ -185,7 +180,9 @@ int SpiUartDevice::read() {
     return -1;
   }
   
-  return readRegister(RHR);
+  int result = readRegister(RHR);
+  //Serial.print((char)result);
+  return result;
 }
 
 
@@ -198,6 +195,7 @@ void SpiUartDevice::write(byte value) {
   while (readRegister(TXLVL) == 0) {
     // Wait for space in TX buffer
   };
+  //Serial.print((char)value);
   writeRegister(THR, value); 
 }
 

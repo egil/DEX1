@@ -9,6 +9,7 @@ public class Thingy implements Comparable<Thingy> {
   private String _name;
   private String _url;
   private boolean _status;
+  private boolean _statusChangeQueued = false;
 
   public Thingy() {
   }
@@ -42,6 +43,15 @@ public class Thingy implements Comparable<Thingy> {
     return this;
   }
   
+  public boolean isStatusChangeQueued() {
+    return _statusChangeQueued;
+  }
+
+  public Thingy setStatusChangeQueued(boolean statusChangeQueued) {
+    _statusChangeQueued = statusChangeQueued;
+    return this;
+  }
+  
   // standard overrides
 
   @Override
@@ -53,4 +63,5 @@ public class Thingy implements Comparable<Thingy> {
   public int compareTo(Thingy another) {
     return getName().compareTo(another.getName());
   }
+
 }

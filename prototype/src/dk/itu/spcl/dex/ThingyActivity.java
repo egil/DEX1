@@ -12,7 +12,6 @@ public class ThingyActivity extends Activity implements Repository.Listener {
   private Thingy _thingy;
   private ThingyUpdater _thingyUpdater;
   private Repository _repository;
-  private ThingyStatusWriter _thingyWriter;
   private ToggleButton _toggleButton;
 
   @Override
@@ -21,7 +20,6 @@ public class ThingyActivity extends Activity implements Repository.Listener {
 
     _repository = Repository.getInstance();
     _thingyUpdater = ThingyUpdater.getInstance();
-    _thingyWriter = new ThingyStatusWriter();
 
     _thingy = Repository.getInstance().getThingy(
         getIntent().getStringExtra("thingy"));
@@ -37,7 +35,7 @@ public class ThingyActivity extends Activity implements Repository.Listener {
   public void thingyToggleButtonClicked(View v) {
     ToggleButton button = (ToggleButton) v;
     boolean on = button.isChecked();
-    //_thingyWriter.setStatus(_thingy, on);
+    _thingy.setStatus(on).setStatusChangeQueued(true);
   }
   
   @Override 

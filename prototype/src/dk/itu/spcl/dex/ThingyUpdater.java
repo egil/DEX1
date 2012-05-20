@@ -21,14 +21,14 @@ public class ThingyUpdater implements Runnable {
   private ThingyUpdater() {
     _repository = Repository.getInstance();
   }
-  
+
   public static ThingyUpdater getInstance() {
     if (_instance == null) {
       _instance = new ThingyUpdater();
     }
     return _instance;
   }
- 
+
   public void requestUpdatesFor(Object me) {
     _listeners.add(me);
     toggleUpdatesAsNeeded();
@@ -41,7 +41,7 @@ public class ThingyUpdater implements Runnable {
 
   private synchronized void toggleUpdatesAsNeeded() {
     Log.i("dex", _listeners.size() + " activity/ies need updates");
-    
+
     if (_listeners.size() == 0)
       stopBackgroundUpdates();
     else
@@ -77,7 +77,14 @@ public class ThingyUpdater implements Runnable {
 
   private void updateThingy(Thingy thingy) {
     try {
-      boolean thingyStatus = getStatusFromUrl(thingy.getUrl() + "values");
+      String url = thingy.getUrl() + "values";
+      if (thingy.isStatusChangeQueued()) {
+        url += thingy.getStatus() ? "/1" : "/0";
+        thingy.setStatusChangeQueued(false);
+      } else {
+        url += "/z"; // no change
+      }
+      boolean thingyStatus = getStatusFromUrl(url);
       thingy.setStatus(thingyStatus);
     } catch (ClientProtocolException e) {
       Log.e("dex", e.toString());

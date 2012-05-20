@@ -21,7 +21,6 @@ public class PresetActivity extends Activity implements Repository.Listener {
   private Preset _preset;
   private Repository _repository;
   private ThingyUpdater _thingyUpdater;
-  private ThingyStatusWriter _thingyWriter;
   private CustomArrayAdapter<PresetEntry> _listAdapter;
 
   @Override
@@ -31,7 +30,6 @@ public class PresetActivity extends Activity implements Repository.Listener {
 
     _repository = Repository.getInstance();
     _thingyUpdater = ThingyUpdater.getInstance();
-    _thingyWriter = new ThingyStatusWriter();
 
     _preset = Repository.getInstance().getPreset(
         getIntent().getStringExtra("preset"));
@@ -92,8 +90,8 @@ public class PresetActivity extends Activity implements Repository.Listener {
 
   public void onActivatePreset(View view) {
     for (PresetEntry entry : _preset.getEntries()) {
-//      _thingyWriter.setStatus(entry.getThingy(), entry.getStatus());
-//      _thingyWriter.flushWizard();
+      entry.getThingy().setStatus(entry.getStatus())
+          .setStatusChangeQueued(true);
     }
   }
 

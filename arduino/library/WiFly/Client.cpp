@@ -90,6 +90,7 @@ boolean Client::connect() {
     } else if (_domain != NULL) {
       _WiFly.uart.print(_domain);
     } else {
+      Serial.println("never!");
       while (1) {
         // This should never happen
       }

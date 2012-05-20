@@ -1,4 +1,5 @@
 #include "WiFly.h"
+#include "DateTime.h"
 #define REQUEST_LENGTH 40
 
 // Relies on Android device having this IP in AP mode.
@@ -16,38 +17,38 @@ const char* UI =
   "]}";
   
 boolean currentStatus = false;
-char ssid[33];
-char key[60];
-//char* ssid = "HomeAP";
-//char* key = "abcdefgh";
+//char ssid[33];
+//char key[60];
+char* ssid = "HomeAP";
+char* key = "abcdefgh";
 const char* ip;
+time_t lastRequestTime;
+
+Server server(80);
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
   
   Serial.begin(9600);
-  Serial.println("Go! *****");
+  Serial.println("Waiting a bit");
+  delay(2000);  
+  Serial.println("Go!");
   
-  joinBootstrapNetwork();
+/*  joinBootstrapNetwork();
   readWifiInfo();
   joinRealNetwork();
   joinBootstrapNetwork();
-  saveIp();
+  saveIp();*/
   joinRealNetwork();
-  runServer();
-}
-
-void runServer() {
-  WiFly.runServer();
+  
+  server.begin();
 }
 
 void joinBootstrapNetwork() {
-  ip = NULL;
-  while (ip == NULL) {
-    Serial.println("Connecting to BootstrapAP");
-    WiFly.newBegin();
-    ip = WiFly.newConnect("BootstrapAP", "1234567890");
+  WiFly.begin();
+  while (!WiFly.join("BootstrapAP", "1234567890", true)) {
+    Serial.println("Retrying");
   }
   Serial.println("Connected to bootstrap!");
 }
@@ -119,20 +120,24 @@ void readWifiInfo() {
 }
 
 void joinRealNetwork() {
-  ip = NULL;
-  while (ip == NULL) {
-    Serial.println("Connecting to HomeAP");
-    WiFly.newBegin();
-    ip = WiFly.newConnect(ssid, key);
+  WiFly.begin();
+  if (WiFly.join(ssid, key, true)) {
+    ip = WiFly.ip();
+    Serial.println("Connected to real wifi!");
+    Serial.println(ip);
+    lastRequestTime = DateTime::now();
+  } else {
+    Serial.println("Wifi failed");
+    while(1);
   }
 }
 
 void loop() {
   delay(100);
-/*  if (millis() - lastRequestTime > 20000) {
-    Serial.println("More than 20 seconds since request, reconnecting");
+  if (DateTime::now() - lastRequestTime > 10) {
+    Serial.println("More than 10 seconds since request, reconnecting");
     joinRealNetwork();
-  }  */
+  }  
   
   Client client = server.available();
   if (client) {
@@ -164,7 +169,7 @@ void loop() {
     }
     delay(100); // give the web browser time to receive the data
     client.stop();
-//    lastRequestTime = millis();
+    lastRequestTime = now();
   }
 }
 
@@ -184,11 +189,9 @@ void sendResponse(Client client, char* request) {
 
 void sendValues(Client client, char* request) {
   if (strstr(request, "/values/1") != NULL) {
-    Serial.println("turning on");
     currentStatus = true;
     digitalWrite(LED_PIN, HIGH);
   } else if (strstr(request, "/values/0") != NULL) {
-    Serial.println("turning off");
     currentStatus = false;
     digitalWrite(LED_PIN, LOW);
   } 

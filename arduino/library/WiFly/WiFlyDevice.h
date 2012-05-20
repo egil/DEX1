@@ -10,6 +10,10 @@ class WiFlyDevice {
     WiFlyDevice(SpiUartDevice& theUart);
     void begin();
     void beginAdhoc();
+    void runServer();
+        
+    const char* newConnect(const char* ssid, const char* pass);
+    void newBegin();
 
     boolean join(const char *ssid);
     boolean join(const char *ssid, const char *passphrase, 
@@ -60,6 +64,9 @@ class WiFlyDevice {
     boolean enterCommandMode(boolean isAfterBoot = false);
     boolean softwareReboot(boolean isAfterBoot);
     boolean hardwareReboot();
+    void read();
+    void write(const char* string);
+    const char* waitForIP();
 
     friend class Client;
     friend class Server;

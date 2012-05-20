@@ -56,7 +56,7 @@
 class SpiUartDevice : public SpiDevice, public Print {
   
   public:
-    void begin(unsigned long baudrate = BAUD_RATE_DEFAULT);
+    bool begin(unsigned long baudrate = BAUD_RATE_DEFAULT);
     byte available();
     int read();
     void write(byte value);
@@ -75,7 +75,7 @@ class SpiUartDevice : public SpiDevice, public Print {
   private:
     void writeRegister(byte registerAddress, byte data);
     byte readRegister(byte registerAddress);
-    void initUart(unsigned long baudrate);
+    bool initUart(unsigned long baudrate);
     void configureUart(unsigned long baudrate);  
     void setBaudRate(unsigned long baudrate);
     boolean uartConnected();
