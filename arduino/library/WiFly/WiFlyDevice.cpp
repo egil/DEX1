@@ -2,8 +2,19 @@
 #include "WiFly.h"
 
 #define DEBUG_LEVEL 0
+#define REQUEST_LENGTH 40
+#define LED_PIN 13
 
 #include "Debug.h"
+
+boolean currentStatus = false;
+const char* UI = 
+  "{"
+  "'title': 'Light switch',"
+  "'version': 1.0,"
+  "'widgets': ["
+  "{ 'id': '1', 'title': 'Light on', 'type': 'editable', 'content-type': 'boolean', 'widgets': [] }"
+  "]}";
 
 
 boolean WiFlyDevice::findInResponse(const char *toMatch,
@@ -611,10 +622,12 @@ const char* WiFlyDevice::newConnect(const char* ssid, const char* pass) {
 const char* WiFlyDevice::waitForIP() {
   int timeout = 6000;
   unsigned long startTime = millis();
-  char expected[] = "IP=";
+  static char expected[] = "IP=";
+  static char donotwant[] = "FAILED";
   static char ip[16] = "";
   int index = 0;
   int ipIndex = 0;
+  int badIndex = 0;
   
   while (true) {
     while (!uart.available()) {
@@ -624,6 +637,16 @@ const char* WiFlyDevice::waitForIP() {
     
     char c = uart.read();
     Serial.print(c);
+    
+    if (c == donotwant[badIndex]) {
+      badIndex++;
+      if (badIndex == strlen(donotwant)) {
+        return NULL;
+      }
+    } else {
+      badIndex = 0;
+    }
+    
     if (c == expected[index]) {
       index++;
       if (index == strlen(expected)) {
@@ -642,10 +665,118 @@ const char* WiFlyDevice::waitForIP() {
 }
 
 void WiFlyDevice::runServer() {
-  // wait for *OPEN*
-  // read with timeout
-  // extract request
-  // do stuff & send response
+  while (true) {
+    waitForRequest();
+  }
+}
+
+void WiFlyDevice::waitForRequest() {
+  int timeout = 8000;
+  unsigned long start = millis();
+  static char expected[] = "*OPEN*";
+  int index = 0;
+ 
+  Serial.println("Waiting for open");
+  while (true)
+  {
+    while (!uart.available()) {
+      if (millis() > start + timeout) {
+        enterCommandMode();
+        uart.println("close");
+        uart.println("exit");
+        return;
+      }
+    }
+    char c = uart.read();
+    Serial.print(c);
+    if (c == expected[index]) {
+      index++;
+      if (index == strlen(expected)) {
+        handleRequest();
+        return;
+      }
+    } else if (c == '*') {
+      index = 1; // lol
+    } else {
+      index = 0;
+    }
+  }
+}
+
+void WiFlyDevice::handleRequest() {
+  int timeout = 800;
+  unsigned long start = millis();
+  Serial.println("Reading request");
+  static char firstLine[REQUEST_LENGTH];
+  boolean currentLineIsBlank = true;
+  boolean isFirstLine = true;
+  int index = 0;
+  while (true) {
+    while (!uart.available()) {
+      if (millis() > start + timeout)
+       {
+         enterCommandMode();
+         uart.println("close");
+         uart.println("exit");
+         return;
+       }
+    }
+    char c = uart.read();
+    Serial.print(c);
+    if (isFirstLine && index < REQUEST_LENGTH) {
+      firstLine[index++] = c;
+    }        
+    
+    if (c == '\n' && currentLineIsBlank) {
+      firstLine[index] = '\0';
+      sendResponse(firstLine);
+      return;
+    }
+    if (c == '\n') {
+      currentLineIsBlank = true;
+      isFirstLine = false;
+    } else if (c != '\r') {
+      currentLineIsBlank = false;
+    }
+  }
+}
+
+void WiFlyDevice::sendResponse(char* request) {
+  Serial.print("Request is: ");
+  Serial.println(request);
+
+  uart.println("HTTP/1.1 200 OK");
+  uart.println("Content-Type: text/html");
+  uart.println("");
+  
+  if (strstr(request, " /ui ") != NULL) {
+    uart.write(UI);
+  } else if (strstr(request, " /values/") != NULL) {
+    sendValues(request);
+  } else {
+    uart.write("Go to /ui or /values");
+  }
+  Serial.println("Sent response.");
+ 
+  enterCommandMode();
+  uart.println("close");
+  uart.println("exit");
+}
+
+void WiFlyDevice::sendValues(char* request) {
+  if (strstr(request, "/values/1") != NULL) {
+    Serial.println("turning on");
+    currentStatus = true;
+    digitalWrite(LED_PIN, HIGH);
+  } else if (strstr(request, "/values/0") != NULL) {
+    Serial.println("turning off");
+    currentStatus = false;
+    digitalWrite(LED_PIN, LOW);
+  } 
+  
+  uart.write("{ '1': ");
+  uart.write(currentStatus ? "true" : "false");
+  uart.write(" }\n");
 }
 
 

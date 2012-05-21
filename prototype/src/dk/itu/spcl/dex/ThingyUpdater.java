@@ -80,12 +80,16 @@ public class ThingyUpdater implements Runnable {
       String url = thingy.getUrl() + "values";
       if (thingy.isStatusChangeQueued()) {
         url += thingy.getStatus() ? "/1" : "/0";
-        thingy.setStatusChangeQueued(false);
       } else {
         url += "/z"; // no change
       }
       boolean thingyStatus = getStatusFromUrl(url);
-      thingy.setStatus(thingyStatus);
+      if (thingy.getStatus() == thingyStatus) {
+        thingy.setStatusChangeQueued(false);
+      }
+      if (!thingy.isStatusChangeQueued()) {
+        thingy.setStatus(thingyStatus);
+      }
     } catch (ClientProtocolException e) {
       Log.e("dex", e.toString());
     } catch (IOException e) {

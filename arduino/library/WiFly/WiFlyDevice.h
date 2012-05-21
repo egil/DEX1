@@ -11,6 +11,10 @@ class WiFlyDevice {
     void begin();
     void beginAdhoc();
     void runServer();
+    void handleRequest();
+    void sendResponse(char* request);
+    void sendValues(char* request);
+    void waitForRequest();
         
     const char* newConnect(const char* ssid, const char* pass);
     void newBegin();
