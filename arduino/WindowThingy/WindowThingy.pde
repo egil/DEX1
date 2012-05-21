@@ -4,7 +4,8 @@
 // Better solution: Use gateway IP.
 #define BOOTSTRAP_GATEWAY "192.168.43.1"
 #define BOOTSTRAP_PORT 44444
-#define LED_PIN 13 // also defined in WiFlyDevice (sigh)
+// also defined in WiFlyDevice (sigh)
+#define LED_PIN 9
  
 char ssid[33];
 char key[60];

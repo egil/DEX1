@@ -3,7 +3,8 @@
 
 #define DEBUG_LEVEL 0
 #define REQUEST_LENGTH 40
-#define LED_PIN 13
+// also defined in pde file
+#define LED_PIN 9 
 
 #include "Debug.h"
 
